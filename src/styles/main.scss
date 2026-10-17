@@ -1,0 +1,134 @@
+@use 'abstracts/variables' as *;
+@use 'abstracts/mixins' as *;
+@use 'components/navbar';
+@use 'components/footer';
+@use 'components/pages';
+
+// Se sobrescriben variables de Bootstrap antes de importarlo
+$primary: $vermilion;
+$secondary: $muted;
+$dark: $ink;
+$body-bg: $paper;
+$body-color: $ink;
+$link-color: $vermilion;
+$link-hover-color: $vermilion-dark;
+$border-radius: 0.6rem;
+$font-family-sans-serif: $font-body;
+$headings-font-family: $font-display;
+$headings-font-weight: $weight-bold;
+
+// Acordeón (preguntas frecuentes)
+$accordion-bg: $white;
+$accordion-border-color: $line;
+$accordion-button-color: $ink;
+$accordion-button-bg: $white;
+$accordion-button-active-bg: $paper;
+$accordion-button-active-color: $ink;
+$accordion-button-focus-border-color: $gold;
+$accordion-button-focus-box-shadow: 0 0 0 0.2rem $gold-focus;
+$accordion-icon-color: $ink;
+$accordion-icon-active-color: $gold-deep;
+
+// Campos de formulario (contacto)
+$input-border-color: $line;
+$input-focus-border-color: $gold;
+$input-focus-box-shadow: 0 0 0 0.2rem $gold-focus;
+$form-label-font-weight: $weight-semibold;
+
+@import 'bootstrap/scss/bootstrap';
+
+// ── Botones (comparten el mixin pill-button: el texto del hover siempre es blanco) ──
+// Botón principal dorado con texto oscuro; en hover pasa a dorado profundo con texto blanco
+.btn-primary {
+  @include pill-button($gold, $gold, $ink);
+}
+
+// Botón con borde blanco: en hover se rellena de blanco y el texto pasa a oscuro para mantener el contraste
+.btn-dark {
+  @include pill-button($ink);
+}
+
+.btn-outline-light {
+  @include pill-button(transparent, $white, $white, $white, $white, $ink);
+}
+
+// ── Estructura general ──
+main {
+  min-height: calc(100vh - #{$navbar-height} - 420px);
+}
+
+.page-container {
+  padding-block: 2rem;
+
+  @include desktop-up {
+    padding-block: 3rem;
+  }
+}
+
+.surface-card {
+  @include card-surface;
+
+  padding: 1.75rem;
+}
+
+.eyebrow {
+  @include label-text($tracking-eyebrow);
+
+  color: $gold;
+}
+
+// ── Hero ──
+.hero {
+  position: relative;
+  overflow: hidden;
+  @include hero-banner;
+
+  background: radial-gradient(circle at 80% 20%, $vermilion-glow, transparent 45%), $ink;
+  color: $on-dark;
+
+  h1 {
+    font-size: clamp(2rem, 5vw, 3.4rem);
+    line-height: 1.15;
+  }
+
+  .lead {
+    max-width: 38rem;
+    color: $on-dark-muted;
+  }
+}
+
+// Kanji decorativo compartido por todos los banners de encabezado
+.hero-kanji {
+  position: absolute;
+  right: 4%;
+  bottom: -2rem;
+  color: $on-dark-ghost;
+  font-family: $font-display;
+  font-size: clamp(5rem, 22vw, 18rem);
+  white-space: nowrap;
+  font-weight: $weight-bold;
+  line-height: 1;
+  pointer-events: none;
+  user-select: none;
+}
+
+// ── Tarjetas de características ──
+.feature-card {
+  height: 100%;
+
+  &__icon {
+    display: grid;
+    place-items: center;
+    width: 3rem;
+    height: 3rem;
+    margin-bottom: 1rem;
+    border-radius: 0.8rem;
+    background: $vermilion-soft;
+    color: $vermilion;
+    font-size: 1.4rem;
+  }
+
+  h2 {
+    font-size: 1.15rem;
+  }
+}

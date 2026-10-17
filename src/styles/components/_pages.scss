@@ -1,0 +1,297 @@
+@use '../abstracts/variables' as *;
+@use '../abstracts/mixins' as *;
+
+html {
+  scroll-behavior: smooth;
+}
+
+// ── Cabecera de páginas informativas ──
+.page-hero {
+  @include hero-banner;
+
+  background: radial-gradient(circle at 85% 0%, $vermilion-glow, transparent 45%), $ink;
+  color: $on-dark;
+
+  h1 {
+    margin-bottom: 0.75rem;
+    font-size: clamp(1.9rem, 4.5vw, 2.9rem);
+    line-height: 1.2;
+  }
+
+  .lead {
+    max-width: 42rem;
+    margin-bottom: 0;
+    color: $on-dark-muted;
+  }
+}
+
+// ── Pasos numerados (Quiénes somos) ──
+.steps {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: step;
+
+  li {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+    counter-increment: step;
+
+    &::before {
+      content: counter(step);
+      display: grid;
+      flex: none;
+      place-items: center;
+      width: 2rem;
+      height: 2rem;
+      border-radius: 50%;
+      background: $gold;
+      color: $ink;
+      font-size: 0.9rem;
+      font-weight: $weight-bold;
+    }
+
+    & + li {
+      margin-top: 1rem;
+    }
+  }
+}
+
+// ── Franja de llamada a la acción ──
+.cta-band {
+  padding: 2.5rem 1.5rem;
+  border-radius: $radius-card;
+  background: radial-gradient(circle at 90% 10%, $vermilion-glow, transparent 50%), $ink;
+  color: $on-dark;
+  text-align: center;
+
+  p {
+    color: $on-dark-muted;
+  }
+}
+
+// ── Preguntas frecuentes ──
+// Los colores del acordeón se definen con variables de Sass de Bootstrap en main.scss
+.faq-accordion {
+  .accordion-item + .accordion-item {
+    margin-top: 0.75rem;
+  }
+
+  .accordion-button {
+    font-weight: $weight-semibold;
+  }
+
+  .accordion-body {
+    color: $muted;
+    line-height: 1.7;
+  }
+}
+
+.faq-category {
+  & + & {
+    margin-top: 2.5rem;
+  }
+
+  // Solo el título de la categoría (no los encabezados internos del acordeón)
+  > h2 {
+    margin-bottom: 1rem;
+    font-size: 1.15rem;
+  }
+}
+
+// ── Documentos legales ──
+.legal {
+  &__toc {
+    @include card-surface;
+
+    padding: 1.25rem;
+
+    @include desktop-up {
+      position: sticky;
+      top: calc(#{$navbar-height} + 1.5rem);
+    }
+
+    h2 {
+      @include label-text;
+
+      margin-bottom: 0.75rem;
+      color: $ink;
+      font-family: $font-body;
+    }
+
+    ol {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      counter-reset: toc;
+    }
+
+    li {
+      counter-increment: toc;
+    }
+
+    a {
+      display: block;
+      padding: 0.35rem 0;
+      color: $muted;
+      font-size: 0.9rem;
+      text-decoration: none;
+      transition: color $transition-base;
+
+      &::before {
+        content: counter(toc) '. ';
+      }
+
+      &:hover {
+        color: $gold-deep;
+      }
+    }
+  }
+
+  &__body {
+    padding: 1.75rem;
+
+    @include tablet-up {
+      padding: 2.5rem;
+    }
+
+    section {
+      scroll-margin-top: calc(#{$navbar-height} + 1.5rem);
+
+      & + section {
+        margin-top: 2rem;
+      }
+    }
+
+    h2 {
+      margin-bottom: 0.75rem;
+      font-size: 1.25rem;
+    }
+
+    p,
+    li {
+      line-height: 1.75;
+    }
+
+    ul {
+      padding-left: 1.2rem;
+    }
+
+    li + li {
+      margin-top: 0.4rem;
+    }
+  }
+
+  &__updated {
+    margin-bottom: 2rem;
+    color: $muted;
+    font-size: 0.9rem;
+  }
+}
+
+// ── Contacto ──
+.contact-channels {
+  padding: 1.5rem 1.75rem;
+  border-radius: $radius-card;
+  background: $ink;
+  color: $on-dark;
+
+  ul {
+    margin-top: 0.5rem;
+  }
+
+  li + li {
+    border-top: 1px solid $on-dark-line;
+  }
+}
+
+.contact-channel {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 0;
+  color: $white;
+  text-decoration: none;
+
+  strong,
+  small {
+    display: block;
+  }
+
+  small {
+    color: $on-dark-muted;
+  }
+
+  &__icon {
+    color: $gold;
+    font-size: 1.35rem;
+  }
+
+  &__text {
+    flex: 1;
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  &__arrow {
+    color: $on-dark-muted;
+    transition: transform $transition-base, color $transition-base;
+  }
+
+  &:hover {
+    color: $gold;
+
+    .contact-channel__arrow {
+      color: $gold;
+      transform: translateX(4px);
+    }
+  }
+}
+
+.contact-info {
+  margin-top: 1.5rem;
+
+  ul {
+    margin-top: 0.75rem;
+  }
+
+  li {
+    display: flex;
+    gap: 0.9rem;
+    padding: 0.8rem 0;
+
+    & + li {
+      border-top: 1px solid $line;
+    }
+  }
+
+  i {
+    color: $gold-deep;
+    font-size: 1.2rem;
+  }
+
+  strong,
+  small {
+    display: block;
+  }
+
+  small {
+    color: $muted;
+    line-height: 1.5;
+  }
+}
+
+.contact-form {
+  @include tablet-up {
+    padding: 2.25rem;
+  }
+
+  // Campo señuelo: fuera de pantalla (no display:none, para que los bots lo vean)
+  &__trap {
+    position: absolute;
+    left: -9999px;
+    height: 0;
+    overflow: hidden;
+  }
+}

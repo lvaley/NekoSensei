@@ -1,0 +1,96 @@
+@use 'variables' as *;
+
+@mixin tablet-up {
+  @media (min-width: $breakpoint-tablet) {
+    @content;
+  }
+}
+
+@mixin desktop-up {
+  @media (min-width: $breakpoint-desktop) {
+    @content;
+  }
+}
+
+@mixin card-surface {
+  background: $white;
+  border: 1px solid $line;
+  border-radius: $radius-card;
+  box-shadow: $shadow-card;
+}
+
+// Botón redondeado. Define los colores mediante las variables de Bootstrap (--bs-btn-*),
+// de modo que el texto del hover y del estado activo siempre sea el indicado (por defecto, blanco).
+@mixin pill-button(
+  $bg,
+  $border: $bg,
+  $color: $white,
+  $hover-bg: $gold-deep,
+  $hover-border: $hover-bg,
+  $hover-color: $white
+) {
+  --bs-btn-color: #{$color};
+  --bs-btn-bg: #{$bg};
+  --bs-btn-border-color: #{$border};
+  --bs-btn-hover-color: #{$hover-color};
+  --bs-btn-hover-bg: #{$hover-bg};
+  --bs-btn-hover-border-color: #{$hover-border};
+  --bs-btn-active-color: #{$hover-color};
+  --bs-btn-active-bg: #{$hover-bg};
+  --bs-btn-active-border-color: #{$hover-border};
+
+  border-radius: $radius-pill;
+  font-weight: $weight-semibold;
+  padding-inline: 1.5rem;
+  transition:
+    background-color $transition-base,
+    border-color $transition-base,
+    color $transition-base;
+}
+
+// Texto de marca en mayúsculas con espaciado amplio (header y footer)
+@mixin brand-name($size, $weight: $weight-bold) {
+  font-family: $font-display;
+  font-size: $size;
+  font-weight: $weight;
+  letter-spacing: $tracking-brand;
+  text-transform: uppercase;
+}
+
+// Etiquetas pequeñas en mayúsculas (títulos del footer, eyebrow)
+@mixin label-text($tracking: $tracking-label) {
+  font-size: 0.78rem;
+  font-weight: $weight-semibold;
+  letter-spacing: $tracking;
+  text-transform: uppercase;
+}
+
+// Enlace que cambia a dorado al pasar el cursor (usado sobre fondos oscuros)
+@mixin gold-hover {
+  color: inherit;
+  text-decoration: none;
+  transition: color $transition-base;
+
+  &:hover {
+    color: $gold;
+  }
+}
+
+// Banner de encabezado: misma altura en el inicio y en todas las páginas (también las nuevas)
+@mixin hero-banner {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  min-height: $hero-min-height;
+  padding-block: 3rem;
+
+  @include tablet-up {
+    min-height: $hero-min-height-tablet;
+  }
+
+  > .container {
+    position: relative;
+    width: 100%;
+  }
+}

@@ -1,0 +1,50 @@
+@use 'sass:color';
+
+// ── Paleta Neko Sensei: tinta índigo + bermellón japonés + dorado sobre papel cálido ──
+$ink: #15152b;
+$ink-soft: #23233f;
+$paper: #faf7f2;
+$white: #fff;
+$vermilion: #d6453d;
+$vermilion-dark: #b5352e;
+$vermilion-soft: color.change($vermilion, $alpha: 0.1);
+$vermilion-glow: color.change($vermilion, $alpha: 0.28);
+$gold: #c9a45c;
+$gold-deep: #ad8330; // dorado más profundo: da contraste al texto blanco en el hover de los botones
+$gold-focus: color.change($gold, $alpha: 0.35);
+$muted: #6b6b80;
+$line: #e8e2d6;
+
+// Blancos translúcidos para fondos oscuros (footer, hero)
+$on-dark: $white;
+$on-dark-muted: color.change($white, $alpha: 0.7);
+$on-dark-subtle: color.change($white, $alpha: 0.5);
+$on-dark-border: color.change($white, $alpha: 0.25);
+$on-dark-line: color.change($white, $alpha: 0.1);
+$on-dark-ghost: color.change($white, $alpha: 0.05);
+
+// ── Tipografía ──
+$font-body: -apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Roboto, sans-serif;
+$font-display: $font-body;
+
+$weight-regular: 400;
+$weight-medium: 500;
+$weight-semibold: 600;
+$weight-bold: 700;
+
+$tracking-brand: 0.14em;
+$tracking-label: 0.14em;
+$tracking-eyebrow: 0.2em;
+
+// ── Forma, sombra y movimiento ──
+$radius-card: 0.9rem;
+$radius-pill: 999px;
+$shadow-card: 0 6px 24px color.change($ink, $alpha: 0.06);
+$transition-base: 0.2s ease;
+$navbar-height: 68px;
+$hero-min-height: 30rem; // altura de los banners de encabezado (móvil)
+$hero-min-height-tablet: 29rem; // altura de los banners de encabezado (tablet y escritorio)
+
+// ── Breakpoints ──
+$breakpoint-tablet: 768px;
+$breakpoint-desktop: 992px;

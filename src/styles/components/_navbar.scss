@@ -1,0 +1,73 @@
+@use '../abstracts/variables' as *;
+@use '../abstracts/mixins' as *;
+
+.site-navbar {
+  min-height: $navbar-height;
+  background: $paper;
+  border-bottom: 1px solid $line;
+
+  // Marca solo texto: mayúsculas, negrita y letras espaciadas (como la referencia)
+  .brand {
+    @include brand-name(1.1rem);
+
+    margin-right: 0;
+    color: $ink;
+    text-decoration: none;
+
+    // !important para que ningún estilo de Bootstrap cambie el peso ni las mayúsculas
+    font-weight: $weight-bold !important;
+    text-transform: uppercase !important;
+  }
+
+  .nav-link {
+    position: relative;
+    padding: 0.5rem 0.9rem;
+    color: $ink;
+    font-size: 0.95rem;
+    font-weight: $weight-medium;
+
+    &::after {
+      content: '';
+      position: absolute;
+      left: 0.9rem;
+      right: 0.9rem;
+      bottom: 0.2rem;
+      height: 2px;
+      background: $gold;
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.25s ease;
+    }
+
+    &:hover::after,
+    &.active::after {
+      transform: scaleX(1);
+    }
+
+    &.active {
+      color: $vermilion;
+    }
+  }
+
+  .btn-cta {
+    @include pill-button($ink);
+
+    padding-block: 0.5rem;
+    font-size: 0.92rem;
+  }
+
+  @media (max-width: ($breakpoint-desktop - 1px)) {
+    .navbar-collapse {
+      padding-block: 0.75rem 1rem;
+    }
+
+    // El subrayado del enlace activo solo cubre el texto, no todo el ancho
+    .navbar-nav {
+      align-items: flex-start;
+    }
+
+    .btn-cta {
+      margin-top: 0.5rem;
+    }
+  }
+}
