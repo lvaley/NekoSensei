@@ -1,6 +1,7 @@
 # Neko Sensei — Plataforma de tutorías
 
 Proyecto de clase · Desarrollo Web · Universidad Mariano Gálvez · Segundo semestre 2026
+
 **Autor:** Luis Enrique Valey Osorio · Carnet 9490-21-16222
 
 ## Stack
