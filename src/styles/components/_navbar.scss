@@ -26,7 +26,7 @@
     font-size: 0.95rem;
     font-weight: $weight-medium;
 
-    &::after {
+    &:not(.dropdown-toggle)::after {
       content: '';
       position: absolute;
       left: 0.9rem;
@@ -39,13 +39,34 @@
       transition: transform 0.25s ease;
     }
 
-    &:hover::after,
-    &.active::after {
+    &:not(.dropdown-toggle):hover::after,
+    &:not(.dropdown-toggle).active::after {
       transform: scaleX(1);
     }
 
     &.active {
       color: $vermilion;
+    }
+  }
+
+  // Menú de usuario
+  .dropdown-menu {
+    padding-block: 0.4rem;
+    border-color: $line;
+    background: $white;
+    box-shadow: $shadow-card;
+  }
+
+  .dropdown-item {
+    padding: 0.5rem 1rem;
+    color: $ink;
+    font-size: 0.95rem;
+
+    &:hover,
+    &:focus,
+    &:active {
+      background: $paper;
+      color: $gold-deep;
     }
   }
 

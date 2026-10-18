@@ -1,12 +1,17 @@
 import { Route, Routes } from 'react-router-dom'
+import { ProtectedRoute } from '../components/auth/ProtectedRoute'
 import { MainLayout } from '../components/layout/MainLayout'
 import { About } from '../pages/About'
+import { AdminUsers } from '../pages/AdminUsers'
 import { ComingSoon } from '../pages/ComingSoon'
 import { Contact } from '../pages/Contact'
+import { Dashboard } from '../pages/Dashboard'
 import { Faq } from '../pages/Faq'
 import { Home } from '../pages/Home'
+import { Login } from '../pages/Login'
 import { NotFound } from '../pages/NotFound'
 import { Privacy } from '../pages/Privacy'
+import { Register } from '../pages/Register'
 import { Status } from '../pages/Status'
 import { Terms } from '../pages/Terms'
 
@@ -14,8 +19,6 @@ import { Terms } from '../pages/Terms'
 const placeholders = [
   { path: 'tutores', title: 'Nuestros tutores' },
   { path: 'cursos', title: 'Cursos' },
-  { path: 'login', title: 'Iniciar sesión' },
-  { path: 'registro', title: 'Crear cuenta' },
 ]
 
 export function AppRouter() {
@@ -28,6 +31,15 @@ export function AppRouter() {
         <Route path="privacidad" element={<Privacy />} />
         <Route path="terminos" element={<Terms />} />
         <Route path="contacto" element={<Contact />} />
+        <Route path="login" element={<Login />} />
+        <Route path="registro" element={<Register />} />
+        {/* Rutas protegidas: requieren sesión; /admin además exige el rol administrador */}
+        <Route element={<ProtectedRoute />}>
+          <Route path="panel" element={<Dashboard />} />
+        </Route>
+        <Route element={<ProtectedRoute roles={['admin']} />}>
+          <Route path="admin" element={<AdminUsers />} />
+        </Route>
         <Route path="status" element={<Status />} />
         {placeholders.map((page) => (
           <Route key={page.path} path={page.path} element={<ComingSoon title={page.title} />} />

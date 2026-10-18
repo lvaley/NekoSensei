@@ -295,3 +295,58 @@ html {
     overflow: hidden;
   }
 }
+
+// ── Autenticación ──
+.auth-card {
+  max-width: 460px;
+  padding: 2rem;
+
+  @include tablet-up {
+    padding: 2.5rem;
+  }
+}
+
+.role-picker {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.role-option {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  align-items: flex-start;
+  padding: 1rem;
+  border: 1px solid $line;
+  border-radius: $radius-card;
+  background: $white;
+  color: $ink;
+  text-align: left;
+  transition: border-color $transition-base, box-shadow $transition-base;
+
+  i {
+    color: $gold-deep;
+    font-size: 1.4rem;
+  }
+
+  small {
+    color: $muted;
+    line-height: 1.4;
+  }
+
+  &:hover {
+    border-color: $gold;
+  }
+
+  &.is-active {
+    border-color: $gold;
+    box-shadow: 0 0 0 0.2rem $gold-focus;
+  }
+}
+
+// Tabla dentro de una tarjeta: fondo blanco como el resto de las tarjetas
+.surface-card .table {
+  --bs-table-bg: #{$white};
+}

@@ -1,16 +1,24 @@
-import { Container, Nav, Navbar as BsNavbar } from 'react-bootstrap'
-import { Link, NavLink } from 'react-router-dom'
+import { Container, Nav, NavDropdown, Navbar as BsNavbar } from 'react-bootstrap'
+import { Link, NavLink, useNavigate } from 'react-router-dom'
 import { SITE } from '../../config/site'
+import { useAuth } from '../../hooks/useAuth'
 
 const links = [
   { to: '/', label: 'Inicio', end: true },
   { to: '/tutores', label: 'Tutores' },
   { to: '/cursos', label: 'Cursos' },
   { to: '/nosotros', label: 'Nosotros' },
-  { to: '/login', label: 'Iniciar sesión' },
 ]
 
 export function Navbar() {
+  const { user, logout } = useAuth()
+  const navigate = useNavigate()
+
+  const handleLogout = () => {
+    logout()
+    navigate('/', { replace: true })
+  }
+
   return (
     <BsNavbar expand="lg" sticky="top" className="site-navbar">
       <Container>
@@ -28,10 +36,32 @@ export function Navbar() {
                 {link.label}
               </Nav.Link>
             ))}
+            {user ? (
+              <NavDropdown title={user.name.split(' ')[0]} id="user-menu" align="end">
+                <NavDropdown.Item as={Link} to="/panel">
+                  Mi panel
+                </NavDropdown.Item>
+                {user.role === 'admin' && (
+                  <NavDropdown.Item as={Link} to="/admin">
+                    Administración
+                  </NavDropdown.Item>
+                )}
+                <NavDropdown.Divider />
+                <NavDropdown.Item as="button" onClick={handleLogout}>
+                  Cerrar sesión
+                </NavDropdown.Item>
+              </NavDropdown>
+            ) : (
+              <Nav.Link as={NavLink} to="/login">
+                Iniciar sesión
+              </Nav.Link>
+            )}
           </Nav>
-          <Link to="/registro" className="btn btn-cta ms-lg-2">
-            Comenzar
-          </Link>
+          {!user && (
+            <Link to="/registro" className="btn btn-cta ms-lg-2">
+              Comenzar
+            </Link>
+          )}
         </BsNavbar.Collapse>
       </Container>
     </BsNavbar>

@@ -38,3 +38,22 @@ export interface ContactPayload {
 }
 
 export type ContactErrors = Partial<Record<'name' | 'email' | 'subject' | 'message', string>>
+
+// Autenticación
+export interface AuthUser {
+  id: string
+  name: string
+  email: string
+  picture?: string
+  role: UserRole
+}
+
+export interface AuthResponse {
+  token: string
+  user: AuthUser
+}
+
+// Usuario tal como lo lista el panel de administración
+export interface AdminUser extends AuthUser {
+  createdAt: string
+}

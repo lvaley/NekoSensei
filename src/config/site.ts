@@ -16,3 +16,6 @@ export const SITE = {
     { label: 'X', icon: 'bi-twitter-x', href: '#' },
   ],
 } as const
+
+// Client ID de Google (público). Si está vacío, el inicio de sesión con Google se muestra deshabilitado
+export const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID ?? ''

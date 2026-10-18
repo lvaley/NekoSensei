@@ -9,7 +9,7 @@ export default defineConfig({
       scss: {
         // Bootstrap 5 aún usa @import y funciones globales de Sass; se silencian sus avisos
         quietDeps: true,
-        silenceDeprecations: ['import', 'global-builtin', 'color-functions', 'if-function', 'mixed-decls'],
+        silenceDeprecations: ['import', 'global-builtin', 'color-functions', 'if-function'],
       },
     },
   },
