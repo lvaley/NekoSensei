@@ -59,7 +59,7 @@ tutorias/
 | Versión | Estado | Contenido |
 |---|---|---|
 | v0.1 | ✅ | Estructura base, ESLint, SCSS, Bootstrap, API base con MongoDB, health check, identidad visual Neko Sensei, navbar y footer, páginas informativas (inicio, nosotros, FAQ, contacto, privacidad, términos, estado) y API de contacto |
-| v0.2 | ⏳ | Google OAuth, JWT, roles y rutas protegidas |
+| v0.2 | ✅ | Google OAuth, JWT, roles y rutas protegidas |
 | v0.3 | ⏳ | Onboarding, perfil de tutor, categorías |
 | v0.4 | ⏳ | Ofertas, búsqueda, mapa y traslado |
 | v0.5 | ⏳ | Agenda, calendario y suscripciones |
