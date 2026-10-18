@@ -1,23 +1,14 @@
 import type { Request, Response } from 'express'
 import { env } from '../config/env'
 import { SELF_ASSIGNABLE_ROLES, User } from '../models/User'
-import type { IUser, UserRole } from '../models/User'
+import type { UserRole } from '../models/User'
+import { toSelfUser } from '../serializers/user'
 import { verifyGoogleToken } from '../services/google.service'
 import { signToken } from '../services/token.service'
 
 interface GoogleLoginBody {
   credential?: unknown
   role?: unknown
-}
-
-function toPublicUser(user: IUser & { _id: unknown }) {
-  return {
-    id: String(user._id),
-    name: user.name,
-    email: user.email,
-    picture: user.picture,
-    role: user.role,
-  }
 }
 
 // Inicio de sesión / registro con Google. El rol solo se acepta al crear la cuenta.
@@ -59,7 +50,7 @@ export async function googleLogin(req: Request<unknown, unknown, GoogleLoginBody
   await user.save()
 
   const token = signToken({ sub: String(user._id), role: user.role })
-  res.json({ token, user: toPublicUser(user) })
+  res.json({ token, user: toSelfUser(user) })
 }
 
 // Devuelve el usuario de la sesión actual (el rol se lee de la base de datos)
@@ -69,5 +60,5 @@ export async function getMe(req: Request, res: Response): Promise<void> {
     res.status(401).json({ message: 'Sesión inválida o expirada' })
     return
   }
-  res.json({ user: toPublicUser(user) })
+  res.json({ user: toSelfUser(user) })
 }

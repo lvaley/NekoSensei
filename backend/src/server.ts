@@ -1,10 +1,12 @@
 import { app } from './app'
 import { connectDB } from './config/db'
 import { env } from './config/env'
+import { ensureDefaultCategories } from './services/categories.service'
 
 async function bootstrap(): Promise<void> {
   try {
     await connectDB()
+    await ensureDefaultCategories()
   } catch (error) {
     console.error('No se pudo conectar a MongoDB:', error)
     process.exit(1)
