@@ -38,6 +38,9 @@
   --bs-btn-active-color: #{$hover-color};
   --bs-btn-active-bg: #{$hover-bg};
   --bs-btn-active-border-color: #{$hover-border};
+  --bs-btn-disabled-color: #{$color};
+  --bs-btn-disabled-bg: #{$bg};
+  --bs-btn-disabled-border-color: #{$border};
 
   border-radius: $radius-pill;
   font-weight: $weight-semibold;

@@ -16,7 +16,7 @@ export function Navbar() {
 
   const handleLogout = () => {
     logout()
-    navigate('/', { replace: true })
+    navigate('/login', { replace: true })
   }
 
   return (
@@ -41,6 +41,11 @@ export function Navbar() {
                 <NavDropdown.Item as={Link} to="/panel">
                   Mi panel
                 </NavDropdown.Item>
+                {user.onboardingCompleted && (
+                  <NavDropdown.Item as={Link} to="/perfil">
+                    Mi perfil
+                  </NavDropdown.Item>
+                )}
                 {user.role === 'admin' && (
                   <NavDropdown.Item as={Link} to="/admin">
                     Administración

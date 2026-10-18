@@ -350,3 +350,230 @@ html {
 .surface-card .table {
   --bs-table-bg: #{$white};
 }
+
+// ── Perfil y onboarding ──
+.profile-form {
+  display: grid;
+  gap: 1.25rem;
+
+  .btn-lg {
+    justify-self: start;
+  }
+}
+
+.location-picker {
+  height: 320px;
+  overflow: hidden;
+  border: 1px solid $line;
+  border-radius: $radius-card;
+
+  &.is-invalid {
+    border-color: $vermilion;
+  }
+
+  .leaflet-container {
+    width: 100%;
+    height: 100%;
+    font-family: inherit;
+  }
+}
+
+.category-group {
+  & + & {
+    margin-top: 1rem;
+  }
+}
+
+.chip-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.chip {
+  padding: 0.35rem 0.9rem;
+  border: 1px solid $line;
+  border-radius: $radius-pill;
+  background: $white;
+  color: $ink;
+  font-size: 0.9rem;
+  transition: border-color $transition-base, background $transition-base;
+
+  &:hover {
+    border-color: $gold;
+  }
+
+  &.is-active {
+    border-color: $gold;
+    background: $gold;
+    color: $ink;
+    font-weight: $weight-semibold;
+  }
+}
+
+// ── Administración ──
+.admin-nav {
+  border-bottom: 1px solid $line;
+  background: $white;
+
+  .nav-link {
+    padding: 0.9rem 1rem;
+    border-bottom: 2px solid transparent;
+    color: $muted;
+    font-weight: $weight-medium;
+
+    &:hover {
+      color: $ink;
+    }
+
+    &.active {
+      border-bottom-color: $gold;
+      color: $ink;
+    }
+  }
+}
+
+.filter-pills {
+  --bs-nav-pills-link-active-bg: #{$ink};
+  --bs-nav-pills-link-active-color: #{$white};
+
+  gap: 0.5rem;
+
+  .nav-link {
+    border: 1px solid $line;
+    border-radius: $radius-pill;
+    background: $white;
+    color: $ink;
+    cursor: pointer;
+
+    &:hover {
+      border-color: $gold;
+    }
+
+    &.active {
+      border-color: $ink;
+      background: $ink;
+      color: $white;
+    }
+  }
+}
+
+.tutor-review {
+  .avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  .rate {
+    color: $gold-deep;
+    font-size: 1.15rem;
+  }
+
+  &__data {
+    display: grid;
+    gap: 0.75rem 1.5rem;
+    margin-bottom: 1.25rem;
+
+    @include tablet-up {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    dt {
+      color: $muted;
+      font-size: 0.8rem;
+      font-weight: $weight-medium;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    dd {
+      margin: 0;
+      overflow-wrap: anywhere;
+    }
+  }
+}
+
+.category-add {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+
+  input {
+    flex: 1 1 14rem;
+  }
+}
+
+.category-card {
+  overflow: hidden;
+
+  &__head {
+    background: $paper;
+    font-weight: $weight-semibold;
+  }
+
+  li {
+    border-top: 1px solid $line;
+  }
+}
+
+.category-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.25rem;
+
+  &__name {
+    flex: 1 1 10rem;
+
+    &.is-inactive {
+      color: $muted;
+
+      small {
+        font-weight: $weight-regular;
+      }
+    }
+  }
+
+  &__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+
+    .btn-link {
+      color: $ink;
+      font-size: 0.85rem;
+      font-weight: $weight-medium;
+      text-decoration: none;
+
+      &:hover {
+        color: $gold-deep;
+      }
+
+      &.text-danger:hover {
+        color: $vermilion-dark;
+      }
+    }
+  }
+
+  input {
+    flex: 1 1 12rem;
+  }
+}
+
+// Aviso sobre la tarjeta de inicio de sesión (sesión cerrada / expirada)
+.auth-notice {
+  max-width: 460px;
+  border-radius: 14px;
+  animation: notice-in 0.25s ease-out;
+}
+
+@keyframes notice-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+}

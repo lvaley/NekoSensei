@@ -50,7 +50,7 @@ export function About() {
     <>
       <PageHero
         eyebrow="Nosotros"
-        title="Conectamos a quienes quieren aprender con quienes saben enseñar"
+        title="El proyecto detrás de Neko Sensei"
         subtitle="Neko Sensei es una plataforma de tutorías para encontrar a tu sensei ideal, en línea o en persona, y aprender a tu ritmo."
       />
 

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import type { ReactNode } from 'react'
-import { api, TOKEN_KEY } from '../services/api'
+import { api, NOTICE_KEY, TOKEN_KEY } from '../services/api'
 import type { AuthResponse, AuthUser } from '../types'
 import { AuthContext } from './auth-context'
 import type { AuthContextValue } from './auth-context'
@@ -39,10 +39,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = useCallback(() => {
     localStorage.removeItem(TOKEN_KEY)
+    try {
+      sessionStorage.setItem(NOTICE_KEY, 'logout')
+    } catch {
+      // sin almacenamiento disponible: solo se omite el aviso
+    }
     setUser(null)
   }, [])
 
-  const value = useMemo(() => ({ user, loading, loginWithGoogle, logout }), [user, loading, loginWithGoogle, logout])
+  const value = useMemo(() => ({ user, loading, loginWithGoogle, logout, setUser }), [user, loading, loginWithGoogle, logout])
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }

@@ -1,6 +1,8 @@
 import axios from 'axios'
 
 export const TOKEN_KEY = 'tutorias_token'
+// Aviso que se muestra una sola vez en el login: 'logout' (cierre voluntario) o 'expired' (token inválido)
+export const NOTICE_KEY = 'tutorias_session_notice'
 
 export const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL ?? 'http://localhost:4000/api',
@@ -21,8 +23,10 @@ api.interceptors.response.use(
   (response) => response,
   (error: unknown) => {
     if (axios.isAxiosError(error) && error.response?.status === 401) {
-      localStorage.removeItem(TOKEN_KEY)
-      if (window.location.pathname !== '/login') {
+      // Solo cuenta como sesión vencida si había un token guardado
+      if (localStorage.getItem(TOKEN_KEY)) {
+        localStorage.removeItem(TOKEN_KEY)
+        sessionStorage.setItem(NOTICE_KEY, 'expired')
         window.location.assign('/login')
       }
     }

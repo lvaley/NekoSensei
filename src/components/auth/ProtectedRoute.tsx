@@ -25,6 +25,11 @@ export function ProtectedRoute({ roles }: ProtectedRouteProps) {
     return <Navigate to="/login" replace state={{ from: location.pathname }} />
   }
 
+  // Primer ingreso: hasta completar el onboarding solo se puede ver esa pantalla
+  if (!user.onboardingCompleted && location.pathname !== '/onboarding') {
+    return <Navigate to="/onboarding" replace />
+  }
+
   if (roles && !roles.includes(user.role)) {
     return (
       <Container className="page-container text-center">
