@@ -135,3 +135,67 @@ export interface ProfilePayload {
 }
 
 export type ProfileErrors = Record<string, string>
+
+// ── Catálogo público: tutores, cursos (ofertas) y búsqueda ──
+export interface MapPoint {
+  lat: number
+  lng: number
+}
+
+export interface PublicOffer {
+  id: string
+  title: string
+  description: string
+  category: { id: string; name: string }
+  modes: TeachingMode[]
+  hourlyRate: number
+  travelFeePerKm: number
+  maxTravelKm: number
+  tutor: { id: string; name: string; picture?: string }
+  // Solo vienen con valor si se conoce la dirección de quien consulta
+  distanceKm: number | null
+  inTravelRange: boolean | null
+  travelCost: number | null
+}
+
+export interface PublicTutor {
+  id: string
+  name: string
+  picture?: string
+  bio: string
+  hourlyRate: number
+  fromPrice: number
+  categories: string[]
+  offerCount: number
+  location: MapPoint | null
+  distanceKm: number | null
+}
+
+export interface TutorDetail {
+  tutor: Omit<PublicTutor, 'fromPrice' | 'offerCount'> & { portfolioUrl?: string }
+  offers: PublicOffer[]
+}
+
+// Oferta tal como la ve su tutor en "Mis ofertas"
+export interface MyOffer {
+  id: string
+  title: string
+  description: string
+  category: { id: string; name: string }
+  modes: TeachingMode[]
+  hourlyRate: number
+  travelFeePerKm: number
+  maxTravelKm: number
+  active: boolean
+}
+
+export interface OfferPayload {
+  title: string
+  description: string
+  category: string
+  modes: TeachingMode[]
+  hourlyRate: number | ''
+  travelFeePerKm: number | ''
+  maxTravelKm: number | ''
+  active: boolean
+}

@@ -46,6 +46,11 @@ export function Navbar() {
                     Mi perfil
                   </NavDropdown.Item>
                 )}
+                {user.role === 'tutor' && user.onboardingCompleted && (
+                  <NavDropdown.Item as={Link} to="/mis-ofertas">
+                    Mis ofertas
+                  </NavDropdown.Item>
+                )}
                 {user.role === 'admin' && (
                   <NavDropdown.Item as={Link} to="/admin">
                     Administración
