@@ -168,7 +168,6 @@ tutorias/
 - **Pago simulado:** no se mueve dinero real. Cualquier tarjeta con formato válido (13–19 dígitos, vencimiento futuro, CVV de 3–4 dígitos) se aprueba. Para probar rechazos, el servidor decide por los **últimos 4 dígitos**: `0002` → el banco rechaza el pago, `9995` → fondos insuficientes, `0069` → tarjeta bloqueada o vencida (se guarda un pago *Rechazado*). Se guarda únicamente la marca y los últimos 4 dígitos: el número completo y el CVV nunca se almacenan. En la interfaz no se menciona que es una simulación.
 - **Renovación manual:** cuando queda una semana de clases o menos aparece *Renovar plan*; abre otro cobro por el mismo plan y los mismos horarios, empezando después de la última clase. Se paga igual y suma otro bloque (*Bloque 2*…).
 - **Mis pagos / Pagos recibidos:** `/pagos`, con concepto, clases, traslado, total, tarjeta y estado (incluye rechazos del estudiante).
-- **Pendiente (reportes v0.8):** comisión de la plataforma, ganancias del tutor y reembolsos cuando el tutor cancela un bloque pagado
 
 ### Notificaciones (campanita)
 
