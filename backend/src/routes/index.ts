@@ -1,12 +1,19 @@
 import { Router } from 'express'
 import { getMe, googleLogin } from '../controllers/auth.controller'
 import { createCategory, deleteCategory, listCategories, updateCategory } from '../controllers/categories.controller'
+import { cancelEnrollment, createEnrollment, decideEnrollment, finishEnrollment, listEnrollments, listSlots } from '../controllers/enrollments.controller'
+import { declineReschedule, proposeReschedule, requestReschedule, rescheduleSlots, respondReschedule } from '../controllers/reschedule.controller'
+import { listPayments, payEnrollment, planSlots, renewEnrollment } from '../controllers/payments.controller'
+import { enrollmentTravel, previewOfferTravel } from '../controllers/travel.controller'
+import { getSessionDetail } from '../controllers/sessionDetail.controller'
+import { cancelSession, completeSession, createSession, listSessions } from '../controllers/sessions.controller'
 import { createOffer, deleteOffer, listMyOffers, updateOffer } from '../controllers/offers.controller'
 import { getTutor, listOffers, listTutors } from '../controllers/public.controller'
 import { createContactMessage } from '../controllers/contact.controller'
 import { getHealth } from '../controllers/health.controller'
 import { updateProfile } from '../controllers/profile.controller'
 import { downloadTutorCv, listTutorApplications, reviewTutor } from '../controllers/tutors.controller'
+import { listNotifications, markAllNotificationsRead, markNotificationRead } from '../controllers/notifications.controller'
 import { listUsers } from '../controllers/users.controller'
 import { requireAuth, requireRole } from '../middlewares/auth'
 
@@ -47,3 +54,33 @@ apiRouter.get('/my/offers', requireAuth, requireRole('tutor'), listMyOffers)
 apiRouter.post('/my/offers', requireAuth, requireRole('tutor'), createOffer)
 apiRouter.put('/my/offers/:id', requireAuth, requireRole('tutor'), updateOffer)
 apiRouter.delete('/my/offers/:id', requireAuth, requireRole('tutor'), deleteOffer)
+
+// Notificaciones (campanita del header)
+apiRouter.get('/notifications', requireAuth, listNotifications)
+apiRouter.patch('/notifications/read-all', requireAuth, markAllNotificationsRead)
+apiRouter.patch('/notifications/:id/read', requireAuth, markNotificationRead)
+
+// Inscripciones (suscripción de un estudiante a un curso) y agenda de clases
+apiRouter.post('/enrollments', requireAuth, requireRole('student'), createEnrollment)
+apiRouter.get('/enrollments', requireAuth, requireRole('student', 'tutor'), listEnrollments)
+apiRouter.patch('/enrollments/:id/decision', requireAuth, requireRole('tutor'), decideEnrollment)
+apiRouter.patch('/enrollments/:id/cancel', requireAuth, requireRole('student', 'tutor'), cancelEnrollment)
+apiRouter.get('/offers/:id/plan-slots', requireAuth, requireRole('student'), planSlots)
+apiRouter.post('/enrollments/:id/pay', requireAuth, requireRole('student'), payEnrollment)
+apiRouter.post('/enrollments/:id/renew', requireAuth, requireRole('student'), renewEnrollment)
+apiRouter.get('/payments', requireAuth, requireRole('student', 'tutor'), listPayments)
+apiRouter.get('/offers/:id/travel', requireAuth, requireRole('student'), previewOfferTravel)
+apiRouter.get('/enrollments/:id/travel', requireAuth, requireRole('student', 'tutor'), enrollmentTravel)
+apiRouter.get('/enrollments/:id/slots', requireAuth, requireRole('student', 'tutor'), listSlots)
+apiRouter.patch('/enrollments/:id/finish', requireAuth, requireRole('tutor'), finishEnrollment)
+apiRouter.get('/sessions', requireAuth, requireRole('student', 'tutor'), listSessions)
+apiRouter.get('/sessions/:id/detail', requireAuth, requireRole('student', 'tutor'), getSessionDetail)
+apiRouter.post('/enrollments/:id/sessions', requireAuth, requireRole('student', 'tutor'), createSession)
+apiRouter.patch('/sessions/:id/cancel', requireAuth, requireRole('student', 'tutor'), cancelSession)
+apiRouter.patch('/sessions/:id/complete', requireAuth, requireRole('tutor'), completeSession)
+// Reagendar clases a domicilio: solicitud del estudiante y gestión del tutor
+apiRouter.post('/sessions/:id/reschedule', requireAuth, requireRole('student'), requestReschedule)
+apiRouter.get('/sessions/:id/reschedule/slots', requireAuth, requireRole('tutor'), rescheduleSlots)
+apiRouter.post('/sessions/:id/reschedule/propose', requireAuth, requireRole('tutor'), proposeReschedule)
+apiRouter.post('/sessions/:id/reschedule/decline', requireAuth, requireRole('tutor'), declineReschedule)
+apiRouter.post('/sessions/:id/reschedule/respond', requireAuth, requireRole('student'), respondReschedule)

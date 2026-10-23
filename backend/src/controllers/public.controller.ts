@@ -1,17 +1,20 @@
 import type { Request, Response } from 'express'
 import { isValidObjectId } from 'mongoose'
 import { Category } from '../models/Category'
-import { Offer, TEACHING_MODES } from '../models/Offer'
-import type { IOffer, TeachingMode } from '../models/Offer'
+import { CLASS_TYPES, COURSE_LEVELS, Offer, TEACHING_MODES } from '../models/Offer'
+import type { ClassType, CourseLevel, IOffer, TeachingMode } from '../models/Offer'
 import { User } from '../models/User'
 import type { IUser } from '../models/User'
 import { distanceKm, round } from '../services/geo.service'
+import { activeSeats } from '../services/seats.service'
 
 interface Filters {
   q: string
   categoryIds: string[] | null
   maxPrice: number | null
   mode: TeachingMode | null
+  level: CourseLevel | null
+  classType: ClassType | null
   origin: { lat: number; lng: number } | null
   maxKm: number | null
 }
@@ -22,7 +25,7 @@ function numberParam(value: unknown): number | null {
   return Number.isFinite(parsed) ? parsed : null
 }
 
-// Lee los filtros de búsqueda de la URL (?q=&category=&maxPrice=&mode=&lat=&lng=&maxKm=)
+// Lee los filtros de búsqueda de la URL (?q=&category=&maxPrice=&mode=&level=&classType=&lat=&lng=&maxKm=)
 async function readFilters(req: Request): Promise<Filters> {
   const q = typeof req.query.q === 'string' ? req.query.q.trim().toLowerCase().slice(0, 60) : ''
 
@@ -35,11 +38,13 @@ async function readFilters(req: Request): Promise<Filters> {
   }
 
   const mode = TEACHING_MODES.includes(req.query.mode as TeachingMode) ? (req.query.mode as TeachingMode) : null
+  const level = COURSE_LEVELS.includes(req.query.level as CourseLevel) ? (req.query.level as CourseLevel) : null
+  const classType = CLASS_TYPES.includes(req.query.classType as ClassType) ? (req.query.classType as ClassType) : null
   const lat = numberParam(req.query.lat)
   const lng = numberParam(req.query.lng)
   const origin = lat !== null && lng !== null && Math.abs(lat) <= 90 && Math.abs(lng) <= 180 ? { lat, lng } : null
 
-  return { q, categoryIds, maxPrice: numberParam(req.query.maxPrice), mode, origin, maxKm: numberParam(req.query.maxKm) }
+  return { q, categoryIds, maxPrice: numberParam(req.query.maxPrice), mode, level, classType, origin, maxKm: numberParam(req.query.maxKm) }
 }
 
 type TutorDoc = IUser & { _id: unknown }
@@ -66,11 +71,13 @@ async function approvedTutors(): Promise<Map<string, TutorDoc>> {
 function offerMatches(offer: IOffer, filters: Filters): boolean {
   if (filters.categoryIds && !filters.categoryIds.includes(String(offer.category))) return false
   if (filters.mode && !offer.modes.includes(filters.mode)) return false
+  if (filters.level && (offer.level ?? 'basic') !== filters.level) return false
+  if (filters.classType && (offer.classType ?? 'individual') !== filters.classType) return false
   if (filters.maxPrice !== null && offer.hourlyRate > filters.maxPrice) return false
   return true
 }
 
-function toOfferView(offer: IOffer & { _id: unknown }, tutor: TutorDoc, categoryName: string, filters: Filters) {
+function toOfferView(offer: IOffer & { _id: unknown }, tutor: TutorDoc, categoryName: string, filters: Filters, seatsTaken: number) {
   return {
     id: String(offer._id),
     title: offer.title,
@@ -78,6 +85,16 @@ function toOfferView(offer: IOffer & { _id: unknown }, tutor: TutorDoc, category
     category: { id: String(offer.category), name: categoryName },
     modes: offer.modes,
     hourlyRate: offer.hourlyRate,
+    level: offer.level ?? 'basic',
+    availability: (offer.availability ?? []).map((window) => ({ day: window.day, start: window.start, end: window.end })),
+    classType: offer.classType ?? 'individual',
+    maxStudents: offer.maxStudents ?? 1,
+    // Cupos libres de una clase grupal (null en las individuales)
+    seatsLeft: offer.classType === 'group' ? Math.max(0, offer.maxStudents - seatsTaken) : null,
+    weeks: offer.weeks ?? null,
+    sessionsPerWeek: offer.sessionsPerWeek ?? null,
+    totalSessions: offer.totalSessions ?? 1,
+    sessionDurationMin: offer.sessionDurationMin ?? 60,
     travelFeePerKm: offer.travelFeePerKm,
     maxTravelKm: offer.maxTravelKm,
     tutor: { id: String(tutor._id), name: tutor.name, picture: tutor.picture },
@@ -96,10 +113,11 @@ export async function listOffers(req: Request, res: Response): Promise<void> {
   const tutors = await approvedTutors()
   const offers = await Offer.find({ active: true, tutor: { $in: [...tutors.keys()] } }).sort({ createdAt: -1 }).limit(500)
   const names = await categoryNames(offers.map((offer) => offer.category))
+  const seats = await activeSeats(offers.map((offer) => offer._id))
 
   let views = offers
     .filter((offer) => offerMatches(offer, filters))
-    .map((offer) => toOfferView(offer, tutors.get(String(offer.tutor)) as TutorDoc, names.get(String(offer.category)) ?? '', filters))
+    .map((offer) => toOfferView(offer, tutors.get(String(offer.tutor)) as TutorDoc, names.get(String(offer.category)) ?? '', filters, seats.get(String(offer._id)) ?? 0))
     .filter((view) => !filters.q || `${view.title} ${view.description} ${view.tutor.name} ${view.category.name}`.toLowerCase().includes(filters.q))
     .filter((view) => filters.maxKm === null || view.distanceKm === null || view.distanceKm <= filters.maxKm)
 
@@ -116,7 +134,7 @@ export async function listTutors(req: Request, res: Response): Promise<void> {
   const offersByTutor = new Map<string, IOffer[]>()
   for (const offer of offers) offersByTutor.set(String(offer.tutor), [...(offersByTutor.get(String(offer.tutor)) ?? []), offer])
 
-  const hasOfferFilter = filters.categoryIds !== null || filters.mode !== null
+  const hasOfferFilter = filters.categoryIds !== null || filters.mode !== null || filters.level !== null || filters.classType !== null
   const allCategoryIds = new Set<string>()
   tutors.forEach((tutor) => tutor.categories.forEach((id) => allCategoryIds.add(String(id))))
   const names = await categoryNames([...allCategoryIds])
@@ -168,6 +186,7 @@ export async function getTutor(req: Request<{ id: string }>, res: Response): Pro
   const filters = await readFilters(req)
   const offers = await Offer.find({ tutor: tutor._id, active: true }).sort({ createdAt: -1 })
   const names = await categoryNames([...tutor.categories, ...offers.map((offer) => offer.category)])
+  const seats = await activeSeats(offers.map((offer) => offer._id))
   const doc = tutor as unknown as TutorDoc
 
   res.json({
@@ -182,6 +201,6 @@ export async function getTutor(req: Request<{ id: string }>, res: Response): Pro
       location: publicLocation(doc),
       distanceKm: filters.origin && tutor.address ? round(distanceKm(filters.origin, tutor.address), 1) : null,
     },
-    offers: offers.map((offer) => toOfferView(offer, doc, names.get(String(offer.category)) ?? '', filters)),
+    offers: offers.map((offer) => toOfferView(offer, doc, names.get(String(offer.category)) ?? '', filters, seats.get(String(offer._id)) ?? 0)),
   })
 }
