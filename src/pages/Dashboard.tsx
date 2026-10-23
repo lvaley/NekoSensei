@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom'
 import { PageHero } from '../components/ui/PageHero'
 import { useAuth } from '../hooks/useAuth'
 import { useDocumentTitle } from '../hooks/useDocumentTitle'
+import { useEnrollments } from '../hooks/useEnrollments'
 import { api } from '../services/api'
 import type { AuthUser, UserRole } from '../types'
 
@@ -25,11 +26,14 @@ function greetingFor(date: Date): string {
 const ROLE_SHORTCUTS: Record<UserRole, { icon: string; title: string; text: string; to?: string }[]> = {
   student: [
     { icon: 'bi-search', title: 'Buscar tutores', text: 'Filtra por materia, precio, modalidad y cercanía.', to: '/tutores' },
-    { icon: 'bi-calendar-check', title: 'Mis reservas', text: 'Consulta y gestiona tus clases.' },
+    { icon: 'bi-journal-check', title: 'Mis cursos', text: 'Tus cursos activos, solicitudes y tutores.', to: '/mis-cursos' },
+    { icon: 'bi-calendar-check', title: 'Agenda', text: 'Tu calendario de clases.', to: '/agenda' },
   ],
   tutor: [
     { icon: 'bi-person-vcard', title: 'Mi perfil de tutor', text: 'Biografía, portafolio y tarifa.', to: '/perfil' },
     { icon: 'bi-journal-text', title: 'Mis ofertas', text: 'Publica tus cursos, precios y modalidades.', to: '/mis-ofertas' },
+    { icon: 'bi-people', title: 'Mis estudiantes', text: 'Responde solicitudes y revisa a tus alumnos.', to: '/mis-estudiantes' },
+    { icon: 'bi-calendar-check', title: 'Agenda', text: 'Tu calendario de clases.', to: '/agenda' },
   ],
   admin: [
     { icon: 'bi-people', title: 'Usuarios', text: 'Consulta las cuentas registradas.', to: '/admin' },
@@ -49,6 +53,8 @@ export function Dashboard() {
   const [greeting] = useState(() => greetingFor(new Date()))
 
   const isTutor = user?.role === 'tutor'
+  const { items: enrollments } = useEnrollments(isTutor && user?.tutor?.status === 'approved')
+  const pendingRequests = enrollments?.filter((item) => item.status === 'pending').length ?? 0
   const tutorStatus = user?.tutor?.status
 
   // El estado del perfil de tutor lo cambia el admin desde otra sesión: mientras esté
@@ -99,9 +105,14 @@ export function Dashboard() {
             )}
           </Alert>
         )}
+        {pendingRequests > 0 && (
+          <Alert variant="info" className="mb-4">
+            Tienes <strong>{pendingRequests}</strong> {pendingRequests === 1 ? 'solicitud' : 'solicitudes'} de estudiantes por responder. <Link to="/mis-estudiantes">Revisar ahora</Link>
+          </Alert>
+        )}
         <Row className="g-4">
           {ROLE_SHORTCUTS[user.role].map((item) => (
-            <Col md={6} key={item.title}>
+            <Col md={6} lg={ROLE_SHORTCUTS[user.role].length > 2 ? 4 : 6} key={item.title}>
               <div className="surface-card feature-card">
                 <i className={`bi ${item.icon} feature-card__icon`} aria-hidden="true" />
                 <h2 className="h5">{item.title}</h2>

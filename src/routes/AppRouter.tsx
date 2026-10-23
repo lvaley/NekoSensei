@@ -7,13 +7,17 @@ import { About } from '../pages/About'
 import { AdminCategories } from '../pages/AdminCategories'
 import { AdminTutors } from '../pages/AdminTutors'
 import { AdminUsers } from '../pages/AdminUsers'
+import { Agenda } from '../pages/Agenda'
 import { Contact } from '../pages/Contact'
 import { Courses } from '../pages/Courses'
 import { Dashboard } from '../pages/Dashboard'
 import { Faq } from '../pages/Faq'
 import { Home } from '../pages/Home'
 import { Login } from '../pages/Login'
+import { MyCourses } from '../pages/MyCourses'
 import { MyOffers } from '../pages/MyOffers'
+import { MyStudents } from '../pages/MyStudents'
+import { Payments } from '../pages/Payments'
 import { NotFound } from '../pages/NotFound'
 import { Privacy } from '../pages/Privacy'
 import { Register } from '../pages/Register'
@@ -57,6 +61,14 @@ export function AppRouter() {
         </Route>
         <Route element={<ProtectedRoute roles={['tutor']} />}>
           <Route path="mis-ofertas" element={<MyOffers />} />
+          <Route path="mis-estudiantes" element={<MyStudents />} />
+        </Route>
+        <Route element={<ProtectedRoute roles={['student']} />}>
+          <Route path="mis-cursos" element={<MyCourses />} />
+        </Route>
+        <Route element={<ProtectedRoute roles={['student', 'tutor']} />}>
+          <Route path="agenda" element={<Agenda />} />
+          <Route path="pagos" element={<Payments />} />
         </Route>
         {/* Catálogo público: se puede explorar sin iniciar sesión */}
         <Route path="tutores" element={<Tutors />} />

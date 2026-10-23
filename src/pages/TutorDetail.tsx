@@ -2,9 +2,11 @@ import { useEffect, useMemo, useState } from 'react'
 import { Alert, Col, Container, Row, Spinner } from 'react-bootstrap'
 import { Link, useParams } from 'react-router-dom'
 import { Avatar } from '../components/ui/Avatar'
+import { EnrollButton } from '../components/enrollments/EnrollButton'
 import { OfferCard } from '../components/ui/OfferCard'
 import { useAuth } from '../hooks/useAuth'
 import { useDocumentTitle } from '../hooks/useDocumentTitle'
+import { useEnrollments } from '../hooks/useEnrollments'
 import { api } from '../services/api'
 import type { TutorDetail as TutorDetailData } from '../types'
 import { money } from '../utils/money'
@@ -12,6 +14,8 @@ import { money } from '../utils/money'
 export function TutorDetail() {
   const { id } = useParams()
   const { user } = useAuth()
+  const mine = useEnrollments(user?.role === 'student')
+  const openByOffer = new Map((mine.items ?? []).filter((item) => item.status === 'pending' || item.status === 'awaiting_payment' || item.status === 'active').map((item) => [item.offer.id, item]))
   const [data, setData] = useState<TutorDetailData | null>(null)
   const [status, setStatus] = useState<'loading' | 'ready' | 'missing' | 'error'>('loading')
   useDocumentTitle(data?.tutor.name ?? 'Tutor')
@@ -96,12 +100,11 @@ export function TutorDetail() {
         <Row className="g-4">
           {offers.map((offer) => (
             <Col md={6} key={offer.id}>
-              <OfferCard offer={offer} showTutor={false} />
+              <OfferCard offer={offer} showTutor={false} footer={<EnrollButton offer={offer} current={openByOffer.get(offer.id)} onRequested={() => void mine.reload()} />} />
             </Col>
           ))}
         </Row>
       )}
-      <p className="text-secondary small mt-4">Próximamente podrás reservar clases y escribirle directamente desde aquí.</p>
     </Container>
   )
 }

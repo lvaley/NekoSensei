@@ -434,7 +434,7 @@ html {
   }
 }
 
-.filter-pills {
+.nav.filter-pills {
   --bs-nav-pills-link-active-bg: #{$ink};
   --bs-nav-pills-link-active-color: #{$white};
 
@@ -627,6 +627,133 @@ html {
   font-weight: $weight-semibold;
 }
 
+.offer-card__schedule {
+  margin: 0 0 0.75rem;
+  color: $muted;
+  font-size: 0.88rem;
+
+  i {
+    color: $gold-deep;
+  }
+}
+
+.availability-editor {
+  display: grid;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  border: 1px dashed $line;
+  border-radius: 0.6rem;
+  background: $white;
+
+  &.is-invalid {
+    border-color: $vermilion;
+  }
+
+  &__row {
+    display: grid;
+    grid-template-columns: minmax(7.5rem, 1.4fr) minmax(0, 1fr) auto minmax(0, 1fr) auto;
+    gap: 0.5rem;
+    align-items: center;
+
+    @media (max-width: 575.98px) {
+      grid-template-columns: 1fr 1fr;
+
+      > :first-child {
+        grid-column: 1 / -1;
+      }
+
+      > span {
+        display: none;
+      }
+    }
+  }
+}
+
+.reschedule-notice {
+  display: grid;
+  gap: 0.15rem;
+  margin-top: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  border-left: 3px solid $gold;
+  border-radius: 0.4rem;
+  background: $gold-soft;
+  font-size: 0.85rem;
+
+  small {
+    color: $muted;
+  }
+
+  &.is-action {
+    border-color: $vermilion;
+    background: $vermilion-soft;
+  }
+
+  &.is-closed {
+    border-color: $line;
+    background: $paper;
+  }
+}
+
+.class-type-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.2rem 0.7rem;
+  border: 1px solid $line;
+  border-radius: $radius-pill;
+  background: $white;
+  color: $ink;
+  font-size: 0.78rem;
+  font-weight: $weight-semibold;
+
+  &.is-group {
+    border-color: $gold;
+    background: $gold-soft;
+  }
+
+  &.is-full {
+    border-color: $vermilion;
+    background: $vermilion-soft;
+    color: $vermilion-dark;
+  }
+}
+
+.level-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.2rem 0.7rem;
+  border: 1px solid $line;
+  border-radius: $radius-pill;
+  background: $white;
+  color: $ink;
+  font-size: 0.78rem;
+  font-weight: $weight-semibold;
+
+  // Tres barras de altura creciente: se doran las que corresponden al nivel
+  &__bars {
+    display: inline-flex;
+    align-items: flex-end;
+    gap: 2px;
+    height: 0.8rem;
+
+    i {
+      display: block;
+      width: 3px;
+      border-radius: 1px;
+      background: $line;
+
+      &:nth-child(1) { height: 40%; }
+      &:nth-child(2) { height: 70%; }
+      &:nth-child(3) { height: 100%; }
+
+      &.is-on {
+        background: $gold-deep;
+      }
+    }
+  }
+}
+
 .mode-list {
   display: flex;
   flex-wrap: wrap;
@@ -768,5 +895,260 @@ html {
     width: 100%;
     height: 100%;
     font-family: inherit;
+  }
+}
+
+// ── Inscripciones y agenda ──
+.tab-count {
+  display: inline-block;
+  min-width: 1.4rem;
+  margin-left: 0.25rem;
+  padding: 0 0.4rem;
+  border-radius: $radius-pill;
+  background: $line;
+  font-size: 0.75rem;
+  text-align: center;
+
+  .nav-link.active & {
+    background: $on-dark-border;
+  }
+}
+
+.enrollment-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+
+  &__note {
+    margin: 0 0 0.5rem;
+    color: $muted;
+    font-size: 0.88rem;
+    font-style: italic;
+  }
+}
+
+.enrollment-status {
+  display: inline-block;
+  padding: 0.15rem 0.65rem;
+  border-radius: $radius-pill;
+  background: $paper;
+  color: $muted;
+  font-size: 0.76rem;
+  font-weight: $weight-semibold;
+
+  &.is-active {
+    background: #e3f3ea;
+    color: #1f7a4d;
+  }
+
+  &.is-pending {
+    background: #fff3d6;
+    color: #8a6410;
+  }
+}
+
+.calendar {
+  padding: 1.25rem;
+
+  &__head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+
+  &__nav {
+    display: grid;
+    place-items: center;
+    width: 2.2rem;
+    height: 2.2rem;
+    border: 1px solid $line;
+    border-radius: 50%;
+    background: $white;
+    color: $ink;
+
+    &:hover {
+      border-color: $gold;
+    }
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 0.3rem;
+  }
+
+  &__weekday {
+    padding-bottom: 0.3rem;
+    color: $muted;
+    font-size: 0.75rem;
+    font-weight: $weight-semibold;
+    text-align: center;
+  }
+
+  &__day {
+    position: relative;
+    aspect-ratio: 1;
+    border: 1px solid transparent;
+    border-radius: 0.6rem;
+    background: transparent;
+    color: $ink;
+    font-size: 0.9rem;
+
+    &:hover {
+      border-color: $gold;
+    }
+
+    &.is-today {
+      border-color: $line;
+      font-weight: $weight-bold;
+    }
+
+    &.has-classes {
+      background: $vermilion-soft;
+    }
+
+    &.is-selected {
+      background: $ink;
+      color: $white;
+    }
+  }
+
+  &__badge {
+    position: absolute;
+    right: 0.2rem;
+    bottom: 0.15rem;
+    min-width: 1rem;
+    padding: 0 0.25rem;
+    border-radius: $radius-pill;
+    background: $vermilion;
+    color: $white;
+    font-size: 0.62rem;
+    line-height: 1rem;
+  }
+}
+
+.session-list {
+  display: grid;
+  gap: 0.75rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.session-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+
+  &__time {
+    display: flex;
+    flex-direction: column;
+    min-width: 3.5rem;
+    padding-right: 1rem;
+    border-right: 2px solid $gold;
+    text-align: center;
+
+    small {
+      color: $muted;
+    }
+  }
+
+  &.is-cancelled {
+    opacity: 0.55;
+
+    h3 {
+      text-decoration: line-through;
+    }
+  }
+}
+
+// Alcance del curso (clases y duración) y progreso
+.offer-card__scope {
+  display: flex;
+  align-items: flex-start;
+  margin: 0.25rem 0 0.75rem;
+  padding: 0.55rem 0.75rem;
+  border: 1px dashed $gold;
+  border-radius: 0.6rem;
+  background: $gold-soft;
+  color: $ink;
+  font-size: 0.88rem;
+
+  i {
+    margin-top: 0.15rem;
+    color: $gold-deep;
+  }
+
+  small {
+    display: block;
+    color: $muted;
+  }
+}
+
+.course-progress {
+  height: 0.4rem;
+  margin-bottom: 0.3rem;
+  background: $line;
+
+  .progress-bar {
+    background: $gold;
+  }
+}
+
+// Detalle de una clase (modal de la agenda)
+.route-map {
+  height: 320px;
+  margin-bottom: 0.75rem;
+  overflow: hidden;
+  border: 1px solid $line;
+  border-radius: 0.6rem;
+
+  .leaflet-container {
+    width: 100%;
+    height: 100%;
+    font-family: inherit;
+  }
+}
+
+.session-detail {
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+    gap: 0.75rem 1.5rem;
+    margin-bottom: 1rem;
+
+    dt {
+      color: $ink;
+      font-size: 0.75rem;
+      font-weight: $weight-medium;
+      letter-spacing: 0.04em;
+      opacity: 0.65;
+      text-transform: uppercase;
+    }
+
+    dd {
+      margin: 0;
+    }
+  }
+
+  &__block {
+    margin-top: 1.25rem;
+    padding-top: 1rem;
+    border-top: 1px solid $line;
+  }
+
+  &__stats {
+    margin: 0;
+    padding-left: 1.1rem;
+
+    .is-ok {
+      color: #1e7a46;
+    }
+
+    .is-warn {
+      color: $vermilion;
+    }
   }
 }

@@ -1,15 +1,21 @@
 import { Alert, Col, Container, Row, Spinner } from 'react-bootstrap'
 import { useSearchParams } from 'react-router-dom'
+import { EnrollButton } from '../components/enrollments/EnrollButton'
 import { OfferCard } from '../components/ui/OfferCard'
 import { PageHero } from '../components/ui/PageHero'
 import { SearchFilters } from '../components/ui/SearchFilters'
+import { useAuth } from '../hooks/useAuth'
 import { useCatalog } from '../hooks/useCatalog'
 import { useDocumentTitle } from '../hooks/useDocumentTitle'
+import { useEnrollments } from '../hooks/useEnrollments'
 import type { PublicOffer } from '../types'
 
 export function Courses() {
   useDocumentTitle('Cursos')
+  const { user } = useAuth()
   const [params, setParams] = useSearchParams()
+  const mine = useEnrollments(user?.role === 'student')
+  const openByOffer = new Map((mine.items ?? []).filter((item) => item.status === 'pending' || item.status === 'awaiting_payment' || item.status === 'active').map((item) => [item.offer.id, item]))
   const { data, loading, error, hasOrigin } = useCatalog<{ offers: PublicOffer[] }>('/offers', params)
 
   return (
@@ -32,7 +38,7 @@ export function Courses() {
           <Row className="g-4 mt-1">
             {data.offers.map((offer) => (
               <Col md={6} lg={4} key={offer.id}>
-                <OfferCard offer={offer} />
+                <OfferCard offer={offer} footer={<EnrollButton offer={offer} current={openByOffer.get(offer.id)} onRequested={() => void mine.reload()} />} />
               </Col>
             ))}
           </Row>

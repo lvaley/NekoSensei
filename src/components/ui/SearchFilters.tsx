@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Col, Form, Row } from 'react-bootstrap'
+import { CLASS_TYPE_OPTIONS } from '../../content/classTypes'
+import { LEVEL_OPTIONS } from '../../content/levels'
 import { MODE_OPTIONS } from '../../content/modes'
 import { api } from '../../services/api'
 import type { Category } from '../../types'
@@ -12,7 +14,7 @@ interface SearchFiltersProps {
   total?: number
 }
 
-// Barra de filtros del catálogo. El estado vive en la URL (?q=&category=&mode=&maxPrice=&maxKm=)
+// Barra de filtros del catálogo. El estado vive en la URL (?q=&category=&mode=&level=&classType=&maxPrice=&maxKm=)
 export function SearchFilters({ params, onChange, showDistance, total }: SearchFiltersProps) {
   const [categories, setCategories] = useState<Category[]>([])
   const [text, setText] = useState(params.get('q') ?? '')
@@ -44,7 +46,7 @@ export function SearchFilters({ params, onChange, showDistance, total }: SearchF
     onChange(next)
   }
 
-  const hasFilters = ['q', 'category', 'mode', 'maxPrice', 'maxKm'].some((key) => params.has(key))
+  const hasFilters = ['q', 'category', 'mode', 'level', 'classType', 'maxPrice', 'maxKm'].some((key) => params.has(key))
   const clear = () => {
     setText('')
     onChange(new URLSearchParams())
@@ -73,6 +75,28 @@ export function SearchFilters({ params, onChange, showDistance, total }: SearchF
           <Form.Select id="f-mode" value={params.get('mode') ?? ''} onChange={(event) => setParam('mode', event.target.value)}>
             <option value="">Todas</option>
             {MODE_OPTIONS.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </Form.Select>
+        </Col>
+        <Col sm={6} lg={2}>
+          <Form.Label htmlFor="f-level">Nivel</Form.Label>
+          <Form.Select id="f-level" value={params.get('level') ?? ''} onChange={(event) => setParam('level', event.target.value)}>
+            <option value="">Todos</option>
+            {LEVEL_OPTIONS.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </Form.Select>
+        </Col>
+        <Col sm={6} lg={2}>
+          <Form.Label htmlFor="f-type">Tipo de clase</Form.Label>
+          <Form.Select id="f-type" value={params.get('classType') ?? ''} onChange={(event) => setParam('classType', event.target.value)}>
+            <option value="">Todas</option>
+            {CLASS_TYPE_OPTIONS.map((option) => (
               <option key={option.value} value={option.value}>
                 {option.label}
               </option>

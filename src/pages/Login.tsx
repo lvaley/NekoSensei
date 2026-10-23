@@ -8,7 +8,7 @@ import { NOTICE_KEY } from '../services/api'
 
 const NOTICE_TEXT = {
   logout: '¡Cerraste sesión correctamente, nos vemos pronto!',
-  expired: '¡Ups! Tu sesión expiró, inicia sesión de nuevamente para seguir aprendiendo.',
+  expired: '¡Ups! Tu sesión expiró, inicia sesión de nuevamente.',
 } as const
 const NOTICE_MS = 4000
 

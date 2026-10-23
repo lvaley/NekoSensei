@@ -12,6 +12,7 @@ $vermilion-glow: color.change($vermilion, $alpha: 0.28);
 $gold: #c9a45c;
 $gold-deep: #ad8330; // dorado más profundo: da contraste al texto blanco en el hover de los botones
 $gold-focus: color.change($gold, $alpha: 0.35);
+$gold-soft: color.change($gold, $alpha: 0.1);
 $muted: #6b6b80;
 $line: #e8e2d6;
 

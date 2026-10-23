@@ -48,6 +48,12 @@ $form-label-font-weight: $weight-semibold;
   @include pill-button($ink);
 }
 
+.btn-outline-primary {
+  // Bootstrap calcula texto negro para este color; el hover debe verse blanco como en los demás botones con borde
+  --bs-btn-hover-color: #{$white};
+  --bs-btn-active-color: #{$white};
+}
+
 .btn-outline-light {
   @include pill-button(transparent, $white, $white, $white, $white, $ink);
 }
