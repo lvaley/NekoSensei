@@ -1,16 +1,18 @@
 import axios from 'axios'
 import { useState } from 'react'
-import { Alert, Button, Col, Container, Form, Modal, Row, Spinner } from 'react-bootstrap'
+import { Alert, Button, Col, Container, Form, Modal, Row } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
 import { EnrollmentCard } from '../components/enrollments/EnrollmentCard'
 import { EnrollmentTabs } from '../components/enrollments/EnrollmentTabs'
 import { TravelModal } from '../components/enrollments/TravelModal'
 import { ScheduleModal } from '../components/enrollments/ScheduleModal'
+import { MessageButton } from '../components/ui/MessageButton'
 import { PageHero } from '../components/ui/PageHero'
 import { useDocumentTitle } from '../hooks/useDocumentTitle'
 import { useEnrollments } from '../hooks/useEnrollments'
 import { api } from '../services/api'
 import type { Enrollment } from '../types'
+import { ListSkeleton } from '../components/ui/Skeleton'
 
 type Tab = 'solicitudes' | 'activos' | 'historial'
 
@@ -72,7 +74,7 @@ export function MyStudents() {
         {error && <Alert variant="danger">No pudimos cargar tus estudiantes.</Alert>}
         {actionError && <Alert variant="danger" dismissible onClose={() => setActionError('')}>{actionError}</Alert>}
         {current === 'solicitudes' && pending.some((item) => item.status === 'awaiting_payment') && <Alert variant="info">Las solicitudes aceptadas quedan “esperando pago”: el estudiante tiene 48 horas para pagar y entonces se agendan sus clases.</Alert>}
-        {!items && !error && <Spinner animation="border" role="status" aria-label="Cargando" className="d-block mx-auto my-5" />}
+        {!items && !error && <ListSkeleton label="Cargando tus estudiantes" />}
 
         {items && list.length === 0 && (
           <div className="surface-card text-center">
@@ -89,6 +91,7 @@ export function MyStudents() {
             {list.map((enrollment) => (
               <Col md={6} lg={4} key={enrollment.id}>
                 <EnrollmentCard enrollment={enrollment} viewerRole="tutor">
+                  <MessageButton userId={enrollment.student.id} label="Mensaje" onError={setActionError} />
                   {enrollment.mode === 'student_home' && ['pending', 'awaiting_payment', 'active'].includes(enrollment.status) && (
                     <Button size="sm" variant="outline-dark" onClick={() => setRoute(enrollment)}>
                       <i className="bi bi-signpost-split me-1" aria-hidden="true" />

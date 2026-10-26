@@ -18,6 +18,7 @@ import { MyCourses } from '../pages/MyCourses'
 import { MyOffers } from '../pages/MyOffers'
 import { MyStudents } from '../pages/MyStudents'
 import { Payments } from '../pages/Payments'
+import { Messages } from '../pages/Messages'
 import { NotFound } from '../pages/NotFound'
 import { Privacy } from '../pages/Privacy'
 import { Register } from '../pages/Register'
@@ -69,6 +70,8 @@ export function AppRouter() {
         <Route element={<ProtectedRoute roles={['student', 'tutor']} />}>
           <Route path="agenda" element={<Agenda />} />
           <Route path="pagos" element={<Payments />} />
+          <Route path="mensajes" element={<Messages />} />
+          <Route path="mensajes/:id" element={<Messages />} />
         </Route>
         {/* Catálogo público: se puede explorar sin iniciar sesión */}
         <Route path="tutores" element={<Tutors />} />

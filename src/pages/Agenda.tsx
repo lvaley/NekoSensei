@@ -150,7 +150,6 @@ export function Agenda() {
                       </div>
                       <div className="d-flex flex-column gap-2">
                         <Button size="sm" variant="outline-dark" onClick={() => setDetail(session)}>
-                          <i className="bi bi-geo-alt me-1" aria-hidden="true" />
                           Ver detalle
                         </Button>
                         {session.status === 'scheduled' && (

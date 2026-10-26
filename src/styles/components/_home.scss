@@ -1,0 +1,478 @@
+@use '../abstracts/variables' as *;
+@use '../abstracts/mixins' as *;
+
+// ── Buscador del hero ──
+.home-search {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  max-width: 40rem;
+  padding: 0.4rem 0.4rem 0.4rem 1rem;
+  border-radius: $radius-pill;
+  background: $white;
+  box-shadow: 0 10px 34px rgba(0, 0, 0, 0.28);
+
+  > i {
+    color: $muted;
+  }
+
+  input {
+    flex: 1;
+    min-width: 0;
+    padding: 0.55rem 0.25rem;
+    border: 0;
+    background: none;
+    color: $ink;
+    font-size: 1rem;
+
+    &:focus {
+      outline: none;
+    }
+
+    &::placeholder {
+      color: $muted;
+    }
+  }
+
+  &:focus-within {
+    box-shadow: 0 0 0 3px $gold-focus, 0 10px 34px rgba(0, 0, 0, 0.28);
+  }
+
+  .btn {
+    flex: none;
+    border-radius: $radius-pill;
+    padding-inline: 1.3rem;
+  }
+
+  // En móvil el botón baja a una segunda línea para que el campo no quede diminuto
+  @media (max-width: 575.98px) {
+    flex-wrap: wrap;
+    border-radius: 1.2rem;
+    padding: 0.5rem 0.6rem;
+
+    input {
+      flex-basis: calc(100% - 2rem);
+    }
+
+    .btn {
+      width: 100%;
+    }
+  }
+}
+
+.home-popular {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem 1rem;
+  margin: 1.1rem 0 0;
+  color: $on-dark-muted;
+  font-size: 0.95rem;
+
+  a {
+    color: $on-dark;
+    text-decoration: underline;
+    text-decoration-color: $on-dark-border;
+    text-underline-offset: 0.25em;
+
+    &:hover {
+      text-decoration-color: $gold;
+    }
+  }
+}
+
+// ── Cifras ──
+.home-figures {
+  border-bottom: 1px solid $line;
+  background: $white;
+
+  dl {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+    margin: 0;
+  }
+
+  dl > div {
+    padding: 1.4rem 1rem;
+    border-left: 1px solid $line;
+
+    &:first-child {
+      border-left: 0;
+      padding-left: 0;
+    }
+  }
+
+  dt {
+    font-size: clamp(1.7rem, 4vw, 2.2rem);
+    font-weight: $weight-bold;
+    line-height: 1.1;
+  }
+
+  dd {
+    margin: 0.2rem 0 0;
+    color: $muted;
+    font-size: 0.9rem;
+  }
+
+  @media (max-width: 575.98px) {
+    dl > div:nth-child(odd) {
+      border-left: 0;
+      padding-left: 0;
+    }
+  }
+}
+
+// ── Secciones ──
+.home-section {
+  padding-block: clamp(2.5rem, 6vw, 4.5rem);
+
+  &.is-tinted {
+    background: color-mix(in srgb, $gold 9%, $paper);
+  }
+}
+
+.home-title {
+  margin-bottom: 0.4rem;
+  font-size: clamp(1.5rem, 3.2vw, 2rem);
+  font-weight: $weight-bold;
+  line-height: 1.2;
+}
+
+.home-subtitle {
+  max-width: 34rem;
+  margin-bottom: 2rem;
+  color: $muted;
+}
+
+// Índice de materias: una fila por categoría, sin tarjetas
+.home-index {
+  display: grid;
+  grid-template-columns: 1fr;
+  column-gap: 3rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  @include tablet-up {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  a {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 0.25rem;
+    border-bottom: 1px solid $line;
+    color: $ink;
+    text-decoration: none;
+    transition: padding $transition-base, background $transition-base;
+
+    &:hover,
+    &:focus-visible {
+      padding-inline: 0.9rem;
+      background: $gold-soft;
+
+      .home-index__count {
+        color: $vermilion;
+      }
+    }
+
+    > i {
+      flex: none;
+      color: $vermilion;
+      font-size: 1.5rem;
+    }
+  }
+
+  &__body {
+    display: grid;
+    flex: 1;
+    min-width: 0;
+
+    small {
+      overflow: hidden;
+      color: $muted;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+
+  &__count {
+    flex: none;
+    color: $muted;
+    font-size: 0.9rem;
+  }
+}
+
+.home-mode {
+  height: 100%;
+  padding-top: 1rem;
+  border-top: 3px solid $vermilion;
+
+  > i {
+    color: $vermilion;
+    font-size: 1.8rem;
+  }
+
+  h3 {
+    margin: 0.5rem 0 0.35rem;
+    font-size: 1.15rem;
+  }
+
+  p {
+    margin: 0;
+    color: $muted;
+  }
+}
+
+.home-benefits {
+  display: grid;
+  gap: 1.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  li {
+    display: flex;
+    gap: 1rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid $line;
+
+    &:last-child {
+      padding-bottom: 0;
+      border-bottom: 0;
+    }
+  }
+
+  > li > i {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 2.8rem;
+    height: 2.8rem;
+    border-radius: 0.8rem;
+    background: $vermilion-soft;
+    color: $vermilion;
+    font-size: 1.3rem;
+  }
+
+  h3 {
+    margin-bottom: 0.2rem;
+    font-size: 1.1rem;
+  }
+
+  p {
+    margin: 0;
+    color: $muted;
+  }
+}
+
+// ── Cintillo de registro: aprender y enseñar en una sola franja ──
+.home-join {
+  background: radial-gradient(circle at 10% 100%, $vermilion-glow, transparent 50%), $ink;
+  color: $on-dark;
+
+  > .container {
+    display: grid;
+    gap: 2rem;
+    padding-block: 2rem;
+
+    @include tablet-up {
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+
+      > div + div {
+        padding-left: 3rem;
+        border-left: 1px solid $on-dark-line;
+      }
+    }
+  }
+
+  h2 {
+    margin-bottom: 0.3rem;
+    font-size: 1.4rem;
+    font-weight: $weight-bold;
+  }
+
+  p {
+    max-width: 30rem;
+    margin-bottom: 1rem;
+    color: $on-dark-muted;
+  }
+}
+
+// ── Quiénes somos ──
+.about-hero .lead {
+  max-width: 38rem;
+}
+
+// Comparación "lo habitual" frente a Neko Sensei
+.about-contrast {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 2rem;
+
+  &__head {
+    margin: 0 0 0.6rem;
+    padding-bottom: 0.6rem;
+    border-bottom: 2px solid $line;
+    font-size: 1.05rem;
+    font-weight: $weight-bold;
+
+    &.is-before {
+      color: $muted;
+    }
+
+    &.is-after {
+      border-color: $vermilion;
+      color: $vermilion;
+    }
+  }
+
+  &__row {
+    display: contents;
+
+    p {
+      display: flex;
+      gap: 0.7rem;
+      margin: 0;
+      padding: 1rem 0;
+      border-bottom: 1px solid $line;
+    }
+
+    i {
+      flex: none;
+      margin-top: 0.15rem;
+    }
+
+    .is-before {
+      color: $muted;
+
+      i {
+        color: $muted;
+      }
+    }
+
+    .is-after {
+      font-weight: $weight-medium;
+
+      i {
+        color: $vermilion;
+      }
+    }
+  }
+
+  // En móvil cada fila muestra primero "lo habitual" y debajo la respuesta
+  @media (max-width: 767.98px) {
+    grid-template-columns: 1fr;
+
+    &__head {
+      display: none;
+    }
+
+    &__row p {
+      border-bottom: 0;
+      padding-bottom: 0.2rem;
+
+      &.is-after {
+        padding-top: 0;
+        padding-bottom: 1.1rem;
+        border-bottom: 1px solid $line;
+      }
+    }
+  }
+}
+
+.about-path {
+  height: 100%;
+  padding: 2rem;
+  border: 1px solid $line;
+  border-radius: $radius-card;
+  background: $white;
+
+  h2 {
+    margin-bottom: 1rem;
+    font-size: 1.4rem;
+    font-weight: $weight-bold;
+  }
+
+  ul {
+    margin: 0 0 1.5rem;
+    padding: 0;
+    list-style: none;
+  }
+
+  li {
+    display: flex;
+    gap: 0.7rem;
+    margin-bottom: 0.7rem;
+
+    i {
+      flex: none;
+      margin-top: 0.15rem;
+      color: $vermilion;
+    }
+  }
+
+  &.is-dark {
+    border-color: transparent;
+    background: radial-gradient(circle at 100% 0%, $vermilion-glow, transparent 55%), $ink;
+    color: $on-dark;
+
+    li i {
+      color: $gold;
+    }
+  }
+}
+
+.about-values {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+  gap: 1.5rem 2rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  li {
+    padding-top: 1rem;
+    border-top: 3px solid $gold;
+  }
+
+  i {
+    color: $vermilion;
+    font-size: 1.6rem;
+  }
+
+  h3 {
+    margin: 0.4rem 0 0.2rem;
+    font-size: 1.1rem;
+  }
+
+  p {
+    margin: 0;
+    color: $muted;
+  }
+}
+
+.home-skeleton {
+  &__figures {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+    gap: 1rem;
+    padding-block: 1.6rem;
+
+    .skeleton {
+      height: 2.6rem;
+    }
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+    gap: 1.25rem;
+
+    &.is-small {
+      grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+    }
+  }
+}

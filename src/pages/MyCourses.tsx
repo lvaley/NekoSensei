@@ -1,19 +1,22 @@
 import axios from 'axios'
 import { useState } from 'react'
-import { Alert, Button, Col, Container, Row, Spinner } from 'react-bootstrap'
+import { Alert, Button, Col, Container, Row } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
 import { EnrollmentCard } from '../components/enrollments/EnrollmentCard'
 import { EnrollmentTabs } from '../components/enrollments/EnrollmentTabs'
+import { ReviewModal } from '../components/enrollments/ReviewModal'
 import { PaymentModal } from '../components/enrollments/PaymentModal'
 import { TravelModal } from '../components/enrollments/TravelModal'
 import { ScheduleModal } from '../components/enrollments/ScheduleModal'
 import { Avatar } from '../components/ui/Avatar'
+import { MessageButton } from '../components/ui/MessageButton'
 import { PageHero } from '../components/ui/PageHero'
 import { useDocumentTitle } from '../hooks/useDocumentTitle'
 import { useEnrollments } from '../hooks/useEnrollments'
 import { api } from '../services/api'
 import type { Enrollment } from '../types'
 import { money } from '../utils/money'
+import { ListSkeleton } from '../components/ui/Skeleton'
 
 type Tab = 'activos' | 'solicitudes' | 'historial' | 'tutores'
 
@@ -32,6 +35,7 @@ export function MyCourses() {
   const [schedule, setSchedule] = useState<string | null>(null)
   const [route, setRoute] = useState<Enrollment | null>(null)
   const [actionError, setActionError] = useState('')
+  const [reviewing, setReviewing] = useState<Enrollment | null>(null)
   const [payId, setPayId] = useState<string | null>(null)
   const [paidNotice, setPaidNotice] = useState(false)
 
@@ -84,7 +88,7 @@ export function MyCourses() {
         {error && <Alert variant="danger">No pudimos cargar tus cursos.</Alert>}
         {actionError && <Alert variant="danger">{actionError}</Alert>}
         {paidNotice && <Alert variant="success" dismissible onClose={() => setPaidNotice(false)}>¡Pago aprobado! Tu curso ya está activo.</Alert>}
-        {!items && !error && <Spinner animation="border" role="status" aria-label="Cargando" className="d-block mx-auto my-5" />}
+        {!items && !error && <ListSkeleton label="Cargando tus cursos" />}
 
         {items && tab !== 'tutores' && list.length === 0 && (
           <div className="surface-card text-center">
@@ -110,6 +114,13 @@ export function MyCourses() {
                     <Button size="sm" variant="primary" onClick={() => setPayId(enrollment.id)}>
                       <i className="bi bi-credit-card me-1" aria-hidden="true" />
                       {enrollment.charge.kind === 'renewal' ? 'Pagar renovación' : 'Pagar'} {money(enrollment.charge.total)}
+                    </Button>
+                  )}
+                  <MessageButton userId={enrollment.tutor.id} label="Mensaje" onError={setActionError} />
+                  {enrollment.canReview && (
+                    <Button size="sm" variant="outline-primary" onClick={() => setReviewing(enrollment)}>
+                      <i className="bi bi-star me-1" aria-hidden="true" />
+                      Calificar
                     </Button>
                   )}
                   {enrollment.status === 'active' && enrollment.canRenew && !enrollment.charge && (
@@ -180,6 +191,16 @@ export function MyCourses() {
           onClose={() => setPayId(null)}
           onPaid={() => {
             setPaidNotice(true)
+            void reload()
+          }}
+        />
+      )}
+      {reviewing && (
+        <ReviewModal
+          enrollment={reviewing}
+          onClose={() => setReviewing(null)}
+          onSaved={() => {
+            setReviewing(null)
             void reload()
           }}
         />

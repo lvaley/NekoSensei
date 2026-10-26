@@ -172,7 +172,7 @@ export interface PublicOffer {
   sessionDurationMin: number
   travelFeePerKm: number
   maxTravelKm: number
-  tutor: { id: string; name: string; picture?: string }
+  tutor: { id: string; name: string; picture?: string; rating: number | null; reviewCount: number }
   // Solo vienen con valor si se conoce la dirección de quien consulta
   distanceKm: number | null
   inTravelRange: boolean | null
@@ -188,6 +188,9 @@ export interface PublicTutor {
   fromPrice: number
   categories: string[]
   offerCount: number
+  // Calificación promedio (1–5) y cantidad de reseñas; rating es null si aún no tiene
+  rating: number | null
+  reviewCount: number
   location: MapPoint | null
   distanceKm: number | null
 }
@@ -318,8 +321,26 @@ export interface Enrollment {
   tutor: PersonRef
   student: PersonRef
   nextSession: string | null
+  // Reseña del estudiante a este curso y si ya puede escribirla (tras una clase realizada)
+  review: { rating: number; comment: string; createdAt: string } | null
+  canReview: boolean
   // Solo en inscripciones activas virtuales; null si aún no hay enlace
   meetingUrl: string | null
+}
+
+export interface TutorReview {
+  id: string
+  rating: number
+  comment: string
+  offerTitle: string
+  student: string
+  createdAt: string
+}
+
+export interface TutorReviewsResponse {
+  average: number | null
+  count: number
+  reviews: TutorReview[]
 }
 
 export type SessionStatus = 'scheduled' | 'completed' | 'cancelled'
@@ -413,4 +434,28 @@ export interface SessionDetail extends ClassSession {
 export interface TravelPreview {
   travel: SessionTravel
   price: { feePerKm: number | null; perClass: number | null; totalSessions: number; course: number | null }
+}
+
+// ── Chat ──
+export interface ChatPerson {
+  id: string
+  name: string
+  picture?: string
+}
+
+export interface ChatMessage {
+  id: string
+  conversationId: string
+  senderId: string
+  text: string
+  readAt: string | null
+  createdAt: string
+}
+
+export interface ConversationSummary {
+  id: string
+  other: ChatPerson
+  lastText: string
+  lastMessageAt: string | null
+  unread: number
 }

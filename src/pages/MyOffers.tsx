@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { useCallback, useEffect, useState } from 'react'
 import type { FormEvent } from 'react'
-import { Alert, Button, Col, Container, Form, Modal, Row, Spinner } from 'react-bootstrap'
+import { Alert, Button, Col, Container, Form, Modal, Row } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
 import { CLASS_TYPE_HINTS, CLASS_TYPE_OPTIONS, MAX_GROUP_SIZE, MIN_GROUP_SIZE } from '../content/classTypes'
 import { LEVEL_HINTS, LEVEL_OPTIONS } from '../content/levels'
@@ -17,6 +17,7 @@ import type { Category, MyOffer, OfferPayload, TeachingMode } from '../types'
 import { summarizeAvailability, validateAvailability } from '../utils/availability'
 import { classesLabel, courseTotal, formatDuration, scopeLabel } from '../utils/course'
 import { money } from '../utils/money'
+import { ListSkeleton } from '../components/ui/Skeleton'
 
 const emptyForm = (rate?: number): OfferPayload => ({
   title: '',
@@ -205,7 +206,7 @@ export function MyOffers() {
           </div>
         )}
         {loadError && <Alert variant="danger">No pudimos cargar tus ofertas.</Alert>}
-        {!offers && !loadError && <Spinner animation="border" role="status" aria-label="Cargando ofertas" className="d-block mx-auto my-5" />}
+        {!offers && !loadError && <ListSkeleton label="Cargando ofertas" />}
         {offers && offers.length === 0 && approved && (
           <div className="surface-card text-center">
             <h2 className="h5">Aún no tienes ofertas</h2>

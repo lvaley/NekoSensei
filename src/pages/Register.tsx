@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Container } from 'react-bootstrap'
-import { Link, Navigate } from 'react-router-dom'
+import { Link, Navigate, useSearchParams } from 'react-router-dom'
 import { GoogleSignIn } from '../components/auth/GoogleSignIn'
 import { useAuth } from '../hooks/useAuth'
 import { useDocumentTitle } from '../hooks/useDocumentTitle'
@@ -16,7 +16,9 @@ const roleOptions: { value: SelfRole; icon: string; title: string; text: string 
 export function Register() {
   useDocumentTitle('Crear cuenta')
   const { user } = useAuth()
-  const [role, setRole] = useState<SelfRole>('student')
+  const [params] = useSearchParams()
+  // /registro?rol=tutor abre con "Quiero enseñar" elegido
+  const [role, setRole] = useState<SelfRole>(params.get('rol') === 'tutor' ? 'tutor' : 'student')
 
   if (user) return <Navigate to="/panel" replace />
 

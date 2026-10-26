@@ -1,0 +1,65 @@
+@use "../abstracts/variables" as *;
+// Esqueleto de carga: imita la forma del contenido para que nada salte al llegar los datos
+.skeleton {
+  display: block;
+  border-radius: $radius-card;
+  background: linear-gradient(90deg, $line 25%, color-mix(in srgb, $line 45%, $white) 50%, $line 75%);
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.4s ease-in-out infinite;
+
+  &--title {
+    width: min(18rem, 70%);
+    height: 2rem;
+    margin-bottom: 1.5rem;
+  }
+
+  &--block {
+    height: 5.5rem;
+  }
+
+  &--card {
+    height: 15rem;
+  }
+}
+
+@keyframes skeleton-shimmer {
+  to {
+    background-position: -200% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton {
+    animation: none;
+  }
+}
+
+.skeleton {
+  &--line {
+    height: 1rem;
+    margin-bottom: 0.6rem;
+    border-radius: 0.5rem;
+
+    &.is-short {
+      width: 55%;
+    }
+  }
+
+  &--row {
+    height: 4.5rem;
+    margin-bottom: 0.9rem;
+  }
+
+  &--avatar {
+    width: 7rem;
+    height: 7rem;
+    border-radius: 50%;
+  }
+}
+
+.skeleton-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr));
+  gap: 1.5rem;
+  margin-top: 0.25rem;
+}

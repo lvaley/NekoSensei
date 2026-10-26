@@ -1,11 +1,12 @@
 import { useCallback, useEffect, useState } from 'react'
 import type { FormEvent } from 'react'
-import { Alert, Container, Spinner } from 'react-bootstrap'
+import { Alert, Container } from 'react-bootstrap'
 import { AdminNav } from '../components/ui/AdminNav'
 import { PageHero } from '../components/ui/PageHero'
 import { useDocumentTitle } from '../hooks/useDocumentTitle'
 import { api } from '../services/api'
 import type { Category } from '../types'
+import { ListSkeleton } from '../components/ui/Skeleton'
 
 type State = { kind: 'loading' } | { kind: 'ok'; categories: Category[] } | { kind: 'error' }
 
@@ -136,7 +137,7 @@ export function AdminCategories() {
       <AdminNav />
       <Container className="page-container">
         {error && <Alert variant="danger">{error}</Alert>}
-        {state.kind === 'loading' && <Spinner animation="border" role="status" />}
+        {state.kind === 'loading' && <ListSkeleton label="Cargando" />}
         {state.kind === 'error' && <Alert variant="danger">No se pudo cargar el catálogo.</Alert>}
 
         {state.kind === 'ok' && (

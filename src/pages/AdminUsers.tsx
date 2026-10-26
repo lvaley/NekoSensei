@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react'
-import { Alert, Container, Spinner, Table } from 'react-bootstrap'
+import { Alert, Container, Table } from 'react-bootstrap'
 import { AdminNav } from '../components/ui/AdminNav'
 import { PageHero } from '../components/ui/PageHero'
 import { useDocumentTitle } from '../hooks/useDocumentTitle'
 import { api } from '../services/api'
 import type { AdminUser } from '../types'
+import { ListSkeleton } from '../components/ui/Skeleton'
 
 const ROLE_LABEL = { student: 'Estudiante', tutor: 'Tutor', admin: 'Administrador' } as const
 
@@ -35,7 +36,7 @@ export function AdminUsers() {
       <PageHero eyebrow="Administración" title="Usuarios registrados" subtitle="Cuentas creadas en la plataforma y su rol." />
       <AdminNav />
       <Container className="page-container">
-        {state.kind === 'loading' && <Spinner animation="border" role="status" />}
+        {state.kind === 'loading' && <ListSkeleton label="Cargando" />}
         {state.kind === 'error' && <Alert variant="danger">No se pudo cargar la lista de usuarios.</Alert>}
         {state.kind === 'ok' && (
           <div className="surface-card p-0 table-responsive">

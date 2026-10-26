@@ -1138,17 +1138,355 @@ html {
     padding-top: 1rem;
     border-top: 1px solid $line;
   }
+}
 
-  &__stats {
-    margin: 0;
-    padding-left: 1.1rem;
+// Estrellas de calificación
+.star-rating {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.15rem;
+  color: $gold-deep;
 
-    .is-ok {
-      color: #1e7a46;
+  &.is-lg {
+    font-size: 1.15rem;
+  }
+
+  strong {
+    margin-left: 0.3rem;
+    color: $ink;
+    font-size: 0.9em;
+  }
+
+  small {
+    margin-left: 0.1rem;
+  }
+}
+
+.star-input {
+  display: flex;
+  align-items: center;
+
+  button {
+    padding: 0.1rem 0.2rem;
+    border: 0;
+    background: none;
+    color: $gold-deep;
+    font-size: 1.7rem;
+    line-height: 1;
+    cursor: pointer;
+
+    &:focus-visible {
+      outline: 2px solid $gold-deep;
+      border-radius: 0.3rem;
+    }
+  }
+}
+
+.review-card {
+  padding: 1rem 1.25rem;
+}
+
+// Mensajes (chat)
+.chat {
+  display: grid;
+  grid-template-columns: 20rem 1fr;
+  gap: 1rem;
+  height: min(40rem, calc(100vh - 12rem));
+  min-height: 24rem;
+
+  &__list.surface-card,
+  &__thread.surface-card {
+    padding: 0;
+    overflow: hidden;
+  }
+
+  &__list.surface-card {
+    overflow-y: auto;
+  }
+
+  &__item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    width: 100%;
+    padding: 0.8rem 1rem;
+    border: 0;
+    border-bottom: 1px solid rgba($ink, 0.07);
+    background: none;
+    text-align: left;
+
+    &:hover,
+    &.is-active {
+      background: $gold-soft;
+    }
+  }
+
+  &__item-body {
+    display: grid;
+    flex: 1;
+    min-width: 0;
+
+    > span {
+      min-width: 0;
+    }
+  }
+
+  &__unread {
+    flex-shrink: 0;
+    min-width: 1.3rem;
+    padding: 0 0.4rem;
+    border-radius: 999px;
+    background: $vermilion;
+    color: $white;
+    font-size: 0.72rem;
+    font-weight: $weight-bold;
+    line-height: 1.3rem;
+    text-align: center;
+  }
+
+  &__thread {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  &__empty {
+    display: grid;
+    flex: 1;
+    place-content: center;
+    gap: 0.5rem;
+    color: rgba($ink, 0.55);
+    text-align: center;
+
+    i {
+      font-size: 2.4rem;
+    }
+  }
+
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.7rem 1rem;
+    border-bottom: 1px solid rgba($ink, 0.08);
+  }
+
+  &__messages {
+    flex: 1;
+    padding: 1rem;
+    overflow-y: auto;
+  }
+
+  &__day {
+    margin: 0.8rem 0 0.5rem;
+    color: rgba($ink, 0.55);
+    font-size: 0.78rem;
+    text-align: center;
+  }
+
+  &__bubble {
+    display: flex;
+    flex-direction: column;
+    max-width: min(80%, 30rem);
+    margin-bottom: 0.4rem;
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.9rem 0.9rem 0.9rem 0.2rem;
+    background: rgba($ink, 0.06);
+
+    &.is-mine {
+      margin-left: auto;
+      border-radius: 0.9rem 0.9rem 0.2rem 0.9rem;
+      background: $gold-soft;
+      border: 1px solid rgba($gold, 0.35);
+    }
+  }
+
+  &__text {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+
+  &__meta {
+    align-self: flex-end;
+    color: rgba($ink, 0.5);
+    font-size: 0.7rem;
+
+    .is-read {
+      color: #2b7bd6;
+    }
+  }
+
+  &__form {
+    display: flex;
+    gap: 0.5rem;
+    padding: 0.7rem;
+    border-top: 1px solid rgba($ink, 0.08);
+
+    textarea {
+      resize: none;
+    }
+  }
+
+  // En pantallas angostas se ve una sola columna: la lista o la conversación abierta
+  @media (max-width: 991.98px) {
+    grid-template-columns: 1fr;
+
+    &.has-thread &__list {
+      display: none;
     }
 
-    .is-warn {
+    &:not(.has-thread) &__thread {
+      display: none;
+    }
+  }
+}
+
+// Desglose de costo de una clase (detalle de la sesión)
+.cost-summary {
+  margin: 0;
+  border: 1px solid $line;
+  border-radius: $radius-card;
+  background: $white;
+
+  > div {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.8rem 1rem;
+
+    + div {
+      border-top: 1px solid $line;
+    }
+  }
+
+  dt {
+    font-weight: $weight-medium;
+
+    small {
+      display: block;
+      color: $muted;
+      font-weight: $weight-regular;
+    }
+  }
+
+  dd {
+    margin: 0;
+    font-weight: $weight-bold;
+    white-space: nowrap;
+  }
+
+  &__total {
+    background: color-mix(in srgb, $gold 12%, $white);
+    border-radius: 0 0 $radius-card $radius-card;
+
+    dt,
+    dd {
+      font-size: 1.1rem;
+      font-weight: $weight-bold;
+    }
+
+    dd {
       color: $vermilion;
     }
   }
+}
+
+// Datos del traslado: tres cifras bajo el mapa y, debajo, cobertura y aviso de privacidad
+.travel-stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin: 0.9rem 0 0;
+
+  > div {
+    display: flex;
+    flex-direction: column-reverse;
+    padding: 0.75rem 1rem;
+    border: 1px solid $line;
+    border-radius: $radius-card;
+    background: $white;
+  }
+
+  dd {
+    margin: 0;
+    color: $ink;
+    font-size: 1.5rem;
+    font-weight: $weight-bold;
+    line-height: 1.2;
+
+    small {
+      color: $muted;
+      font-size: 0.85rem;
+      font-weight: $weight-medium;
+    }
+  }
+
+  dt {
+    color: $muted;
+    font-size: 0.8rem;
+    font-weight: $weight-medium;
+
+    span {
+      display: block;
+      font-size: 0.72rem;
+      font-weight: $weight-regular;
+    }
+  }
+
+  .is-base {
+    background: color-mix(in srgb, $gold 10%, $white);
+  }
+
+  @media (max-width: 575.98px) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+    .is-base {
+      grid-column: 1 / -1;
+    }
+  }
+}
+
+.travel-notes {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 0.6rem 1.5rem;
+  margin-top: 0.9rem;
+
+  p {
+    margin: 0;
+  }
+}
+
+.travel-coverage {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.4rem 0.8rem;
+  border-radius: 2rem;
+  font-size: 0.9rem;
+  font-weight: $weight-medium;
+
+  small {
+    font-weight: $weight-regular;
+  }
+
+  &.is-ok {
+    background: #e6f4ec;
+    color: #1e7a46;
+  }
+
+  &.is-warn {
+    background: $vermilion-soft;
+    color: $vermilion-dark;
+  }
+}
+
+.travel-privacy {
+  flex: 1 1 14rem;
+  color: $muted;
+  font-size: 0.82rem;
+  line-height: 1.45;
 }

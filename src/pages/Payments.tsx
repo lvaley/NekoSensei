@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Alert, Container, Spinner } from 'react-bootstrap'
+import { Alert, Container } from 'react-bootstrap'
 import { PageHero } from '../components/ui/PageHero'
 import { useAuth } from '../hooks/useAuth'
 import { useDocumentTitle } from '../hooks/useDocumentTitle'
@@ -7,6 +7,7 @@ import { api } from '../services/api'
 import type { PaymentRecord } from '../types'
 import { classesLabel } from '../utils/course'
 import { money } from '../utils/money'
+import { ListSkeleton } from '../components/ui/Skeleton'
 
 // Historial de pagos: el estudiante ve lo que pagó y el tutor lo que recibió
 export function Payments() {
@@ -35,7 +36,7 @@ export function Payments() {
       <PageHero eyebrow={asTutor ? 'Tutor' : 'Estudiante'} title={asTutor ? 'Pagos recibidos' : 'Mis pagos'} subtitle={asTutor ? 'El historial de los pagos que recibes por tus clases.' : 'El historial de tus pagos y renovaciones.'} />
       <Container className="page-container">
         {state.error && <Alert variant="danger">No pudimos cargar los pagos.</Alert>}
-        {!items && !state.error && <Spinner animation="border" role="status" aria-label="Cargando" className="d-block mx-auto my-5" />}
+        {!items && !state.error && <ListSkeleton label="Cargando tus pagos" />}
         {items && items.length === 0 && (
           <div className="surface-card text-center">
             <p className="text-secondary mb-0">{asTutor ? 'Todavía no has recibido pagos.' : 'Todavía no has hecho pagos.'}</p>

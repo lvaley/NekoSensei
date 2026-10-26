@@ -1,136 +1,140 @@
 import { Col, Container, Row } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
-import { PageHero } from '../components/ui/PageHero'
 import { SITE } from '../config/site'
+import { useAuth } from '../hooks/useAuth'
 import { useDocumentTitle } from '../hooks/useDocumentTitle'
 
-const pillars = [
-  {
-    icon: 'bi-bullseye',
-    title: 'Nuestra misión',
-    text: 'Facilitar el acceso a tutorías de calidad, reuniendo en un solo lugar a estudiantes y tutores con perfiles claros, tarifas transparentes y una agenda sencilla.',
-  },
-  {
-    icon: 'bi-binoculars',
-    title: 'Nuestra visión',
-    text: 'Ser el punto de encuentro para aprender cualquier habilidad, desde idiomas y deportes hasta ciencias y tecnología, de forma flexible y segura.',
-  },
-  {
-    icon: 'bi-lightbulb',
-    title: 'Cómo lo logramos',
-    text: 'Te lo ponemos fácil: encuentras al tutor que se ajusta a tu presupuesto y a tu zona, reservas en minutos sin cruces de horario y resuelves tus dudas por chat antes de tu primera clase.',
-  },
+const CONTRAST = [
+  { before: 'Buscas tutores por recomendaciones y no sabes si son buenos.', after: 'Perfiles revisados por nuestro equipo y reseñas de estudiantes que sí tomaron clase.' },
+  { before: 'Preguntas el precio por mensaje y el traslado es una sorpresa.', after: 'Tarifa por hora y costo de traslado a la vista antes de pedir la clase.' },
+  { before: 'Coordinas cada clase por chat y los horarios se cruzan.', after: 'Eliges tus días y horas fijos y la agenda cuida que no se crucen.' },
+  { before: 'Pagas sin saber si el tutor te aceptó.', after: 'Primero el tutor acepta tu solicitud; solo entonces pagas.' },
 ]
 
-const studentSteps = [
-  'Inicia sesión con Google y completa tu perfil.',
-  'Busca tutores por categoría, precio, calificación, distancia o modalidad.',
-  'Reserva una sesión o una suscripción de 4 u 8 semanas.',
-  'Conversa por chat, aprende y califica tu experiencia.',
+const STUDENT_PERKS = [
+  'Tutores de idiomas, ciencias, tecnología, deportes y posgrado.',
+  'Clases virtuales, en casa del tutor o a domicilio.',
+  'Planes por semanas con el mismo horario, y renovación cuando quieras.',
+  'Chat con el tutor antes de decidir.',
 ]
 
-const tutorSteps = [
-  'Crea tu cuenta de tutor con biografía, portafolio y tarifa.',
-  'Espera la aprobación del equipo administrador.',
-  'Publica tus ofertas, modalidades y disponibilidad semanal.',
-  'Gestiona tus reservas y construye tu reputación con reseñas.',
+const TUTOR_PERKS = [
+  'Tú fijas tu tarifa, tus horarios y hasta dónde viajas.',
+  'Cobras por bloque de semanas: el estudiante paga al empezar.',
+  'Tu agenda se arma sola cuando el estudiante paga.',
+  'Cada reseña construye tu reputación y te trae más estudiantes.',
 ]
 
-const values = [
-  { icon: 'bi-shield-check', title: 'Confianza', text: 'Perfiles revisados, reseñas reales y moderación activa.' },
-  { icon: 'bi-geo-alt', title: 'Cercanía', text: 'Tutores cerca de ti o disponibles en línea.' },
-  { icon: 'bi-eye', title: 'Transparencia', text: 'Tarifas y costos de traslado visibles antes de reservar.' },
-  { icon: 'bi-calendar-check', title: 'Flexibilidad', text: 'Horarios, modalidades y suscripciones a tu medida.' },
+const VALUES = [
+  { icon: 'bi-shield-check', title: 'Confianza', text: 'Revisamos a cada tutor antes de publicarlo.' },
+  { icon: 'bi-geo-alt', title: 'Cercanía', text: 'Tutores cerca de ti o en línea.' },
+  { icon: 'bi-eye', title: 'Transparencia', text: 'Precios claros desde el inicio.' },
+  { icon: 'bi-calendar-check', title: 'Flexibilidad', text: 'Horarios y modalidades a tu medida.' },
 ]
 
 export function About() {
   useDocumentTitle('Quiénes somos')
+  const { user } = useAuth()
 
   return (
     <>
-      <PageHero
-        eyebrow="Nosotros"
-        title="El proyecto detrás de Neko Sensei"
-        subtitle="Neko Sensei es una plataforma de tutorías para encontrar a tu sensei ideal, en línea o en persona, y aprender a tu ritmo."
-      />
-
-      <Container className="page-container">
-        <Row className="g-4">
-          {pillars.map((pillar) => (
-            <Col key={pillar.title} xs={12} md={4}>
-              <div className="surface-card feature-card">
-                <div className="feature-card__icon">
-                  <i className={`bi ${pillar.icon}`} aria-hidden="true" />
-                </div>
-                <h2>{pillar.title}</h2>
-                <p className="mb-0 text-secondary">{pillar.text}</p>
-              </div>
-            </Col>
-          ))}
-        </Row>
-
-        <div className="text-center mt-5 mb-4">
-          <p className="eyebrow mb-2">Cómo funciona</p>
-          <h2 className="h3 mb-0">Aprender o enseñar en cuatro pasos</h2>
-        </div>
-
-        <Row className="g-4">
-          <Col xs={12} md={6}>
-            <div className="surface-card h-100">
-              <h3 className="h5 mb-3">Para estudiantes</h3>
-              <ol className="steps">
-                {studentSteps.map((step) => (
-                  <li key={step}>{step}</li>
-                ))}
-              </ol>
-            </div>
-          </Col>
-          <Col xs={12} md={6}>
-            <div className="surface-card h-100">
-              <h3 className="h5 mb-3">Para tutores</h3>
-              <ol className="steps">
-                {tutorSteps.map((step) => (
-                  <li key={step}>{step}</li>
-                ))}
-              </ol>
-            </div>
-          </Col>
-        </Row>
-
-        <div className="text-center mt-5 mb-4">
-          <p className="eyebrow mb-2">Nuestros valores</p>
-          <h2 className="h3 mb-0">Lo que nos guía</h2>
-        </div>
-
-        <Row className="g-4">
-          {values.map((value) => (
-            <Col key={value.title} xs={12} sm={6} lg={3}>
-              <div className="surface-card feature-card">
-                <div className="feature-card__icon">
-                  <i className={`bi ${value.icon}`} aria-hidden="true" />
-                </div>
-                <h3 className="h5">{value.title}</h3>
-                <p className="mb-0 text-secondary">{value.text}</p>
-              </div>
-            </Col>
-          ))}
-        </Row>
-
-        <div className="cta-band mt-5">
-          <h2 className="h3">Un proyecto en construcción</h2>
-          <p className="mx-auto mb-4" style={{ maxWidth: 560 }}>
-            Neko Sensei es un proyecto académico de Desarrollo Web creado por {SITE.author} y publicado por etapas.
-          </p>
-          <div className="d-flex flex-wrap justify-content-center gap-2">
+      <section className="page-hero about-hero">
+        <span className="hero-kanji" aria-hidden="true">
+          {SITE.kanji}
+        </span>
+        <Container>
+          <h1>Aprende con alguien que sí sabe enseñar</h1>
+          <p className="lead">Neko Sensei reúne a estudiantes y tutores verificados en un solo lugar, con precios claros y clases que se organizan solas.</p>
+          <div className="d-flex flex-wrap gap-2 mt-4">
             <Link to="/tutores" className="btn btn-primary btn-lg">
-              Explorar tutores
+              Encuentra tu tutor
             </Link>
-            <Link to="/registro" className="btn btn-outline-light btn-lg">
-              Crear cuenta
-            </Link>
+            {!user && (
+              <Link to="/registro?rol=tutor" className="btn btn-outline-light btn-lg">
+                Quiero enseñar
+              </Link>
+            )}
           </div>
-        </div>
-      </Container>
+        </Container>
+      </section>
+
+      <section className="home-section">
+        <Container>
+          <h2 className="home-title">Encontrar un buen tutor no debería ser tan difícil</h2>
+          <p className="home-subtitle">Por eso resolvimos lo que más estorba al aprender.</p>
+          <div className="about-contrast">
+            <p className="about-contrast__head is-before">Lo habitual</p>
+            <p className="about-contrast__head is-after">Con Neko Sensei</p>
+            {CONTRAST.map((row) => (
+              <div className="about-contrast__row" key={row.after}>
+                <p className="is-before">
+                  <i className="bi bi-x-lg" aria-hidden="true" />
+                  {row.before}
+                </p>
+                <p className="is-after">
+                  <i className="bi bi-check-lg" aria-hidden="true" />
+                  {row.after}
+                </p>
+              </div>
+            ))}
+          </div>
+        </Container>
+      </section>
+
+      <section className="home-section is-tinted">
+        <Container>
+          <Row className="g-4">
+            <Col md={6}>
+              <div className="about-path">
+                <h2>Si quieres aprender</h2>
+                <ul>
+                  {STUDENT_PERKS.map((perk) => (
+                    <li key={perk}>
+                      <i className="bi bi-check2-circle" aria-hidden="true" />
+                      {perk}
+                    </li>
+                  ))}
+                </ul>
+                <Link to="/cursos" className="btn btn-primary">
+                  Ver cursos disponibles
+                </Link>
+              </div>
+            </Col>
+            <Col md={6}>
+              <div className="about-path is-dark">
+                <h2>Si quieres enseñar</h2>
+                <ul>
+                  {TUTOR_PERKS.map((perk) => (
+                    <li key={perk}>
+                      <i className="bi bi-check2-circle" aria-hidden="true" />
+                      {perk}
+                    </li>
+                  ))}
+                </ul>
+                <Link to={user ? '/panel' : '/registro?rol=tutor'} className="btn btn-outline-light">
+                  {user ? 'Ir a mi panel' : 'Registrarme como tutor'}
+                </Link>
+              </div>
+            </Col>
+          </Row>
+        </Container>
+      </section>
+
+      <section className="home-section">
+        <Container>
+          <h2 className="home-title">Lo que prometemos</h2>
+          <p className="home-subtitle">Cuatro ideas que guían cada decisión de la plataforma.</p>
+          <ul className="about-values">
+            {VALUES.map((value) => (
+              <li key={value.title}>
+                <i className={`bi ${value.icon}`} aria-hidden="true" />
+                <h3>{value.title}</h3>
+                <p>{value.text}</p>
+              </li>
+            ))}
+          </ul>
+        </Container>
+      </section>
     </>
   )
 }

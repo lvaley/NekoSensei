@@ -7,6 +7,7 @@ import { TutorCard } from '../components/ui/TutorCard'
 import { useCatalog } from '../hooks/useCatalog'
 import { useDocumentTitle } from '../hooks/useDocumentTitle'
 import type { PublicTutor } from '../types'
+import { CardGridSkeleton } from '../components/ui/Skeleton'
 
 // El mapa (Leaflet) solo se descarga cuando se elige esa vista
 const TutorsMap = lazy(() => import('../components/ui/TutorsMap').then((module) => ({ default: module.TutorsMap })))
@@ -50,7 +51,7 @@ export function Tutors() {
         </div>
 
         {error && <Alert variant="danger" className="mt-4">No pudimos cargar los tutores. Intenta de nuevo en unos segundos.</Alert>}
-        {loading && !data && <Spinner animation="border" role="status" aria-label="Cargando tutores" className="d-block mx-auto my-5" />}
+        {loading && !data && <CardGridSkeleton label="Cargando tutores" />}
         {data && data.tutors.length === 0 && (
           <div className="surface-card text-center mt-4">
             <h2 className="h5">No encontramos tutores con esos filtros</h2>

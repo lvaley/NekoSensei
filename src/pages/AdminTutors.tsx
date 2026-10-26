@@ -1,10 +1,11 @@
 import { useCallback, useEffect, useState } from 'react'
-import { Alert, Container, Nav, Spinner } from 'react-bootstrap'
+import { Alert, Container, Nav } from 'react-bootstrap'
 import { AdminNav } from '../components/ui/AdminNav'
 import { PageHero } from '../components/ui/PageHero'
 import { useDocumentTitle } from '../hooks/useDocumentTitle'
 import { api } from '../services/api'
 import type { TutorApplication, TutorStatus } from '../types'
+import { ListSkeleton } from '../components/ui/Skeleton'
 
 const FILTERS: { value: TutorStatus; label: string }[] = [
   { value: 'pending', label: 'Pendientes' },
@@ -92,7 +93,7 @@ export function AdminTutors() {
         </Nav>
 
         {actionError && <Alert variant="danger">{actionError}</Alert>}
-        {state.kind === 'loading' && <Spinner animation="border" role="status" />}
+        {state.kind === 'loading' && <ListSkeleton label="Cargando" />}
         {state.kind === 'error' && <Alert variant="danger">No se pudo cargar la lista de tutores.</Alert>}
         {state.kind === 'ok' && state.tutors.length === 0 && <p className="text-secondary">No hay tutores en este estado.</p>}
 

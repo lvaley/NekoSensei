@@ -1,8 +1,12 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Alert, Col, Container, Row, Spinner } from 'react-bootstrap'
+import { Alert, Col, Container, Row } from 'react-bootstrap'
 import { Link, useParams } from 'react-router-dom'
 import { Avatar } from '../components/ui/Avatar'
 import { EnrollButton } from '../components/enrollments/EnrollButton'
+import { MessageButton } from '../components/ui/MessageButton'
+import { ShareWhatsApp } from '../components/ui/ShareWhatsApp'
+import { StarRating } from '../components/ui/StarRating'
+import { TutorReviews } from '../components/ui/TutorReviews'
 import { OfferCard } from '../components/ui/OfferCard'
 import { useAuth } from '../hooks/useAuth'
 import { useDocumentTitle } from '../hooks/useDocumentTitle'
@@ -10,6 +14,7 @@ import { useEnrollments } from '../hooks/useEnrollments'
 import { api } from '../services/api'
 import type { TutorDetail as TutorDetailData } from '../types'
 import { money } from '../utils/money'
+import { ProfileSkeleton } from '../components/ui/Skeleton'
 
 export function TutorDetail() {
   const { id } = useParams()
@@ -41,7 +46,7 @@ export function TutorDetail() {
     }
   }, [id, query])
 
-  if (status === 'loading') return <Spinner animation="border" role="status" aria-label="Cargando perfil" className="d-block mx-auto my-5" />
+  if (status === 'loading') return <ProfileSkeleton />
 
   if (status !== 'ready' || !data) {
     return (
@@ -70,6 +75,9 @@ export function TutorDetail() {
         <div>
           <p className="eyebrow mb-1">Tutor verificado</p>
           <h1 className="h2 mb-2">{tutor.name}</h1>
+          <div className="mb-3">
+            <StarRating value={tutor.rating} count={tutor.reviewCount} size="lg" />
+          </div>
           <div className="mode-list mb-3">
             {tutor.categories.map((name) => (
               <span key={name} className="badge-soft">
@@ -82,6 +90,10 @@ export function TutorDetail() {
             Tarifa base: <strong>{money(tutor.hourlyRate)}/hora</strong>
             {tutor.distanceKm !== null && <> · a {tutor.distanceKm} km de tu dirección</>}
           </p>
+          <div className="d-flex flex-wrap gap-2 mt-3">
+            {user?.role === 'student' && <MessageButton userId={tutor.id} variant="primary" />}
+            <ShareWhatsApp tutor={tutor} offerCount={offers.length} />
+          </div>
           {tutor.portfolioUrl && (
             <a href={tutor.portfolioUrl} target="_blank" rel="noopener noreferrer" className="d-inline-block mt-2">
               <i className="bi bi-box-arrow-up-right me-1" aria-hidden="true" />
@@ -105,6 +117,9 @@ export function TutorDetail() {
           ))}
         </Row>
       )}
+
+      <h2 className="h4 mt-5 mb-3">Reseñas</h2>
+      <TutorReviews tutorId={tutor.id} count={tutor.reviewCount} />
     </Container>
   )
 }

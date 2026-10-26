@@ -3,6 +3,8 @@
 @use 'components/navbar';
 @use 'components/footer';
 @use 'components/pages';
+@use 'components/home';
+@use 'components/skeleton';
 
 // Se sobrescriben variables de Bootstrap antes de importarlo
 $primary: $vermilion;
@@ -59,8 +61,16 @@ $form-label-font-weight: $weight-semibold;
 }
 
 // ── Estructura general ──
-main {
-  min-height: calc(100vh - #{$navbar-height} - 420px);
+// El pie siempre queda al final de la ventana, aunque la página tenga poco contenido
+.app-shell {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  min-height: 100dvh;
+
+  > main {
+    flex: 1 0 auto;
+  }
 }
 
 .page-container {

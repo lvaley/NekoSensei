@@ -1,4 +1,4 @@
-import { Alert, Col, Container, Row, Spinner } from 'react-bootstrap'
+import { Alert, Col, Container, Row } from 'react-bootstrap'
 import { useSearchParams } from 'react-router-dom'
 import { EnrollButton } from '../components/enrollments/EnrollButton'
 import { OfferCard } from '../components/ui/OfferCard'
@@ -9,6 +9,7 @@ import { useCatalog } from '../hooks/useCatalog'
 import { useDocumentTitle } from '../hooks/useDocumentTitle'
 import { useEnrollments } from '../hooks/useEnrollments'
 import type { PublicOffer } from '../types'
+import { CardGridSkeleton } from '../components/ui/Skeleton'
 
 export function Courses() {
   useDocumentTitle('Cursos')
@@ -27,7 +28,7 @@ export function Courses() {
           <p className="text-secondary small mt-3 mb-0">Inicia sesión y registra tu dirección para ver la distancia y el costo de traslado de cada curso.</p>
         )}
         {error && <Alert variant="danger" className="mt-4">No pudimos cargar los cursos. Intenta de nuevo en unos segundos.</Alert>}
-        {loading && !data && <Spinner animation="border" role="status" aria-label="Cargando cursos" className="d-block mx-auto my-5" />}
+        {loading && !data && <CardGridSkeleton label="Cargando cursos" />}
         {data && data.offers.length === 0 && (
           <div className="surface-card text-center mt-4">
             <h2 className="h5">No encontramos cursos con esos filtros</h2>
