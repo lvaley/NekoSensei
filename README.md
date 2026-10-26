@@ -77,6 +77,7 @@ tutorias/
 | POST / PUT / DELETE | `/api/categories` | Crear, editar y eliminar categorías (solo `admin`) |
 | GET | `/api/users` | Lista de usuarios (solo `admin`) |
 | GET | `/api/public/categories` | Categorías activas en árbol, sin sesión |
+| GET | `/api/public/stats` | Cifras públicas del inicio: tutores, cursos, calificación y cursos por categoría |
 | GET | `/api/tutors` | Tutores aprobados (público). Filtros: `q`, `category`, `mode`, `maxPrice`, `lat`, `lng`, `maxKm` |
 | GET | `/api/tutors/:id` | Perfil público de un tutor y sus ofertas activas |
 | GET | `/api/offers` | Cursos activos de tutores aprobados (mismos filtros) |
@@ -89,6 +90,11 @@ tutorias/
 | GET | `/api/offers/:id/plan-slots?mode=&startDate=` | Estudiante: horarios fijos semanales libres y precio del plan antes de solicitarlo |
 | POST | `/api/enrollments/:id/pay` | Estudiante: pago simulado del primer bloque (tras la aceptación) o de una renovación |
 | POST | `/api/enrollments/:id/renew` | Estudiante: abre el cobro de otro bloque (renovación manual) |
+| GET | `/api/tutors/:id/reviews` | Reseñas públicas de un tutor, promedio y cantidad (sin sesión) |
+| POST | `/api/enrollments/:id/review` | Estudiante: califica (1–5 y comentario) tras una clase realizada |
+| GET / POST | `/api/conversations` | Mis conversaciones (último mensaje y sin leer) · abrir o crear la conversación con otra persona |
+| GET | `/api/conversations/:id` · `/:id/messages` · `/unread-count` | Datos de la conversación · mensajes (`?before=` para los anteriores) · total sin leer |
+| POST | `/api/conversations/:id/messages` · `/read` | Enviar un mensaje · marcar como leídos los recibidos |
 | GET | `/api/payments` | Historial de pagos: el estudiante los que hizo, el tutor los que recibió |
 | GET | `/api/sessions?from=&to=` | Clases propias en un rango de fechas |
 | POST | `/api/enrollments/:id/sessions` | Agendar una clase en una inscripción activa (sin choques de horario) |
@@ -185,6 +191,27 @@ Privacidad: a domicilio, el tutor ve la dirección exacta del estudiante, pero e
 
 La ruta no espera a que exista una clase: en un curso **a domicilio**, el estudiante ve el mapa, los km y minutos, si su casa está dentro de la cobertura y el **costo de traslado estimado** (por clase y para todo el curso) al abrir *Solicitar curso*. El tutor ve lo mismo en **Mis estudiantes → Ver ruta** mientras decide si acepta (y también después); el estudiante lo ve en **Mis cursos → Ver traslado**. Privacidad: antes de aceptar, el tutor solo ve una zona aproximada (~1 km) de la casa del estudiante; la dirección exacta aparece al aceptar. El estudiante nunca ve la dirección exacta del tutor.
 
+### Reseñas y calificaciones (v0.6)
+
+- **Quién y cuándo:** solo el estudiante, tras al menos una clase *realizada* de su inscripción. Una reseña por inscripción: 1 a 5 estrellas (enteras) y un comentario de 10 a 500 caracteres. No se edita ni se borra: queda registrada para auditoría.
+- **Promedio inmediato:** se calcula al consultar, así que cada reseña nueva actualiza al instante la calificación del tutor (con cantidad de reseñas) en el directorio, los cursos y su perfil. El tutor recibe un aviso.
+- **Filtro:** `?minRating=` en `/api/tutors` y `/api/offers` (4.5, 4 o 3 estrellas o más).
+- **Privacidad:** las reseñas públicas muestran solo el nombre y la inicial del apellido ("Sofía R."); nunca el correo.
+- Interfaz: botón **Calificar** en *Mis cursos* (cuando ya se realizó una clase) y lista de reseñas en el perfil del tutor.
+
+### Chat en tiempo real (v0.6)
+
+- **Quién puede escribir:** un estudiante a cualquier tutor aprobado (para resolver dudas antes de inscribirse); un tutor solo a estudiantes que tengan o hayan tenido una inscripción con él. Una conversación por pareja.
+- **Mensajes:** hasta 1000 caracteres, con **hora** y **confirmación de lectura** (✓ enviado, ✓✓ leído). Las dos personas reciben los mensajes nuevos en vivo y el globito del menú muestra los no leídos.
+- **Tiempo real:** Socket.io en el mismo servidor de la API. Cada persona se conecta con su JWT (`auth.token` del handshake) y entra a su sala privada; eventos `message:new` y `messages:read`. También se puede enviar y marcar leído por el socket (`message:send`, `messages:read`). Si el socket falla, todo sigue funcionando por HTTP.
+- **Privacidad:** solo los dos participantes pueden leer o escribir en una conversación; un tercero recibe 404 y no le llegan eventos.
+- **Despliegue:** el cliente deriva la URL del socket de `VITE_API_URL` (sin `/api`); `CLIENT_URL` del backend también es el origen permitido del socket. Render admite WebSockets.
+- Interfaz: icono de mensajes junto a la campanita, página `/mensajes` (lista + conversación; en móvil una columna a la vez) y botón **Enviar mensaje** en el perfil del tutor, en *Mis cursos* y en *Mis estudiantes*.
+
+### Compartir perfil por WhatsApp (v0.6)
+
+El perfil de cada tutor tiene el botón **Compartir por WhatsApp**, que abre `https://wa.me/?text=…` con el resumen (nombre, categorías, calificación, tarifa base, número de cursos) y el enlace directo al perfil en la plataforma.
+
 ## Versiones
 
 | Versión | Estado | Contenido |
@@ -194,7 +221,7 @@ La ruta no espera a que exista una clase: en un curso **a domicilio**, el estudi
 | v0.3 | ✅ | Onboarding con mapa, perfil de tutor con revisión del administrador y catálogo de categorías (CRUD) |
 | v0.4 | ✅ | Ofertas de tutores, catálogo público de tutores y cursos con búsqueda, mapa, distancia y costo de traslado |
 | v0.5 | ✅ | Inscripciones con aprobación del tutor, agenda con calendario, menús por rol |
-| v0.6 | ⏳ | Chat, WhatsApp, reseñas |
+| v0.6 | ✅ | Reseñas y calificación promedio, chat en tiempo real (Socket.io), compartir perfil por WhatsApp |
 | v0.7 | ⏳ | Denuncias y suspensión |
 | v0.8 | ⏳ | Reportería |
 | v1.0 | ⏳ | Manuales y entrega final |
