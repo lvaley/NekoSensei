@@ -9,11 +9,14 @@ import { getSessionDetail } from '../controllers/sessionDetail.controller'
 import { cancelSession, completeSession, createSession, listSessions } from '../controllers/sessions.controller'
 import { createOffer, deleteOffer, listMyOffers, updateOffer } from '../controllers/offers.controller'
 import { getTutor, listOffers, listTutors } from '../controllers/public.controller'
+import { getPublicStats } from '../controllers/stats.controller'
 import { createContactMessage } from '../controllers/contact.controller'
 import { getHealth } from '../controllers/health.controller'
 import { updateProfile } from '../controllers/profile.controller'
 import { downloadTutorCv, listTutorApplications, reviewTutor } from '../controllers/tutors.controller'
 import { listNotifications, markAllNotificationsRead, markNotificationRead } from '../controllers/notifications.controller'
+import { getConversation, listConversations, listMessages, openConversation, postMessage, readConversation, unreadCount } from '../controllers/chat.controller'
+import { createReview, listTutorReviews } from '../controllers/reviews.controller'
 import { listUsers } from '../controllers/users.controller'
 import { requireAuth, requireRole } from '../middlewares/auth'
 
@@ -24,8 +27,10 @@ apiRouter.post('/contact', createContactMessage)
 
 // Catálogo público: categorías activas, tutores aprobados y cursos (ofertas) con filtros
 apiRouter.get('/public/categories', listCategories)
+apiRouter.get('/public/stats', getPublicStats)
 apiRouter.get('/tutors', listTutors)
 apiRouter.get('/tutors/:id', getTutor)
+apiRouter.get('/tutors/:id/reviews', listTutorReviews)
 apiRouter.get('/offers', listOffers)
 
 // Autenticación
@@ -84,3 +89,15 @@ apiRouter.get('/sessions/:id/reschedule/slots', requireAuth, requireRole('tutor'
 apiRouter.post('/sessions/:id/reschedule/propose', requireAuth, requireRole('tutor'), proposeReschedule)
 apiRouter.post('/sessions/:id/reschedule/decline', requireAuth, requireRole('tutor'), declineReschedule)
 apiRouter.post('/sessions/:id/reschedule/respond', requireAuth, requireRole('student'), respondReschedule)
+
+// Reseñas: el estudiante califica a su tutor tras una clase realizada
+apiRouter.post('/enrollments/:id/review', requireAuth, requireRole('student'), createReview)
+
+// Chat privado entre estudiante y tutor (los mensajes nuevos también llegan por Socket.io)
+apiRouter.get('/conversations', requireAuth, requireRole('student', 'tutor'), listConversations)
+apiRouter.get('/conversations/unread-count', requireAuth, requireRole('student', 'tutor'), unreadCount)
+apiRouter.post('/conversations', requireAuth, requireRole('student', 'tutor'), openConversation)
+apiRouter.get('/conversations/:id', requireAuth, requireRole('student', 'tutor'), getConversation)
+apiRouter.get('/conversations/:id/messages', requireAuth, requireRole('student', 'tutor'), listMessages)
+apiRouter.post('/conversations/:id/messages', requireAuth, requireRole('student', 'tutor'), postMessage)
+apiRouter.post('/conversations/:id/read', requireAuth, requireRole('student', 'tutor'), readConversation)

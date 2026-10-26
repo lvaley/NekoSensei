@@ -1,7 +1,9 @@
+import { createServer } from 'http'
 import { app } from './app'
 import { connectDB } from './config/db'
 import { env } from './config/env'
 import { ensureDefaultCategories } from './services/categories.service'
+import { attachSocket } from './services/socket.service'
 
 async function bootstrap(): Promise<void> {
   try {
@@ -12,7 +14,9 @@ async function bootstrap(): Promise<void> {
     process.exit(1)
   }
 
-  app.listen(env.port, () => {
+  const server = createServer(app)
+  attachSocket(server)
+  server.listen(env.port, () => {
     console.log(`API escuchando en el puerto ${env.port}`)
   })
 }

@@ -7,6 +7,8 @@ import { User } from '../models/User'
 import type { IUser } from '../models/User'
 import { distanceKm, round } from '../services/geo.service'
 import { activeSeats } from '../services/seats.service'
+import { emptyRating, ratingsFor } from '../services/ratings.service'
+import type { RatingSummary } from '../services/ratings.service'
 
 interface Filters {
   q: string
@@ -17,6 +19,7 @@ interface Filters {
   classType: ClassType | null
   origin: { lat: number; lng: number } | null
   maxKm: number | null
+  minRating: number | null
 }
 
 function numberParam(value: unknown): number | null {
@@ -44,7 +47,7 @@ async function readFilters(req: Request): Promise<Filters> {
   const lng = numberParam(req.query.lng)
   const origin = lat !== null && lng !== null && Math.abs(lat) <= 90 && Math.abs(lng) <= 180 ? { lat, lng } : null
 
-  return { q, categoryIds, maxPrice: numberParam(req.query.maxPrice), mode, level, classType, origin, maxKm: numberParam(req.query.maxKm) }
+  return { q, categoryIds, maxPrice: numberParam(req.query.maxPrice), mode, level, classType, origin, maxKm: numberParam(req.query.maxKm), minRating: numberParam(req.query.minRating) }
 }
 
 type TutorDoc = IUser & { _id: unknown }
@@ -77,7 +80,7 @@ function offerMatches(offer: IOffer, filters: Filters): boolean {
   return true
 }
 
-function toOfferView(offer: IOffer & { _id: unknown }, tutor: TutorDoc, categoryName: string, filters: Filters, seatsTaken: number) {
+function toOfferView(offer: IOffer & { _id: unknown }, tutor: TutorDoc, categoryName: string, filters: Filters, seatsTaken: number, rating: RatingSummary = emptyRating) {
   return {
     id: String(offer._id),
     title: offer.title,
@@ -97,7 +100,7 @@ function toOfferView(offer: IOffer & { _id: unknown }, tutor: TutorDoc, category
     sessionDurationMin: offer.sessionDurationMin ?? 60,
     travelFeePerKm: offer.travelFeePerKm,
     maxTravelKm: offer.maxTravelKm,
-    tutor: { id: String(tutor._id), name: tutor.name, picture: tutor.picture },
+    tutor: { id: String(tutor._id), name: tutor.name, picture: tutor.picture, rating: rating.average, reviewCount: rating.count },
     ...travelInfo(offer, tutor, filters.origin),
   }
 }
@@ -114,10 +117,12 @@ export async function listOffers(req: Request, res: Response): Promise<void> {
   const offers = await Offer.find({ active: true, tutor: { $in: [...tutors.keys()] } }).sort({ createdAt: -1 }).limit(500)
   const names = await categoryNames(offers.map((offer) => offer.category))
   const seats = await activeSeats(offers.map((offer) => offer._id))
+  const ratings = await ratingsFor([...tutors.keys()])
 
   let views = offers
     .filter((offer) => offerMatches(offer, filters))
-    .map((offer) => toOfferView(offer, tutors.get(String(offer.tutor)) as TutorDoc, names.get(String(offer.category)) ?? '', filters, seats.get(String(offer._id)) ?? 0))
+    .map((offer) => toOfferView(offer, tutors.get(String(offer.tutor)) as TutorDoc, names.get(String(offer.category)) ?? '', filters, seats.get(String(offer._id)) ?? 0, ratings.get(String(offer.tutor))))
+    .filter((view) => filters.minRating === null || (view.tutor.rating ?? 0) >= filters.minRating)
     .filter((view) => !filters.q || `${view.title} ${view.description} ${view.tutor.name} ${view.category.name}`.toLowerCase().includes(filters.q))
     .filter((view) => filters.maxKm === null || view.distanceKm === null || view.distanceKm <= filters.maxKm)
 
@@ -138,6 +143,7 @@ export async function listTutors(req: Request, res: Response): Promise<void> {
   const allCategoryIds = new Set<string>()
   tutors.forEach((tutor) => tutor.categories.forEach((id) => allCategoryIds.add(String(id))))
   const names = await categoryNames([...allCategoryIds])
+  const ratings = await ratingsFor([...tutors.keys()])
 
   let views = [...tutors.values()]
     .map((tutor) => {
@@ -157,6 +163,8 @@ export async function listTutors(req: Request, res: Response): Promise<void> {
           fromPrice: prices.length > 0 ? Math.min(...prices) : tutor.tutorProfile?.hourlyRate ?? 0,
           categories: tutor.categories.map((id) => names.get(String(id))).filter(Boolean),
           offerCount: tutorOffers.length,
+          rating: (ratings.get(String(tutor._id)) ?? emptyRating).average,
+          reviewCount: (ratings.get(String(tutor._id)) ?? emptyRating).count,
           location: publicLocation(tutor),
           distanceKm: km,
         },
@@ -167,6 +175,7 @@ export async function listTutors(req: Request, res: Response): Promise<void> {
       if (filters.maxPrice !== null && !hasOfferFilter && (tutor.tutorProfile?.hourlyRate ?? 0) > filters.maxPrice && matching.length === 0) return false
       if (filters.q && !`${view.name} ${view.bio} ${view.categories.join(' ')}`.toLowerCase().includes(filters.q)) return false
       if (filters.maxKm !== null && view.distanceKm !== null && view.distanceKm > filters.maxKm) return false
+      if (filters.minRating !== null && (view.rating ?? 0) < filters.minRating) return false
       return true
     })
     .map(({ view }) => view)
@@ -188,6 +197,7 @@ export async function getTutor(req: Request<{ id: string }>, res: Response): Pro
   const names = await categoryNames([...tutor.categories, ...offers.map((offer) => offer.category)])
   const seats = await activeSeats(offers.map((offer) => offer._id))
   const doc = tutor as unknown as TutorDoc
+  const rating = (await ratingsFor([tutor._id])).get(String(tutor._id)) ?? emptyRating
 
   res.json({
     tutor: {
@@ -197,10 +207,12 @@ export async function getTutor(req: Request<{ id: string }>, res: Response): Pro
       bio: tutor.tutorProfile?.bio ?? '',
       hourlyRate: tutor.tutorProfile?.hourlyRate ?? 0,
       portfolioUrl: tutor.tutorProfile?.portfolioUrl,
+      rating: rating.average,
+      reviewCount: rating.count,
       categories: tutor.categories.map((id) => names.get(String(id))).filter(Boolean),
       location: publicLocation(doc),
       distanceKm: filters.origin && tutor.address ? round(distanceKm(filters.origin, tutor.address), 1) : null,
     },
-    offers: offers.map((offer) => toOfferView(offer, doc, names.get(String(offer.category)) ?? '', filters, seats.get(String(offer._id)) ?? 0)),
+    offers: offers.map((offer) => toOfferView(offer, doc, names.get(String(offer.category)) ?? '', filters, seats.get(String(offer._id)) ?? 0, rating)),
   })
 }

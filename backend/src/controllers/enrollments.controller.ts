@@ -7,6 +7,7 @@ import type { EnrollmentStatus, IEnrollment } from '../models/Enrollment'
 import { Category } from '../models/Category'
 import { Offer, TEACHING_MODES } from '../models/Offer'
 import type { TeachingMode } from '../models/Offer'
+import { Review } from '../models/Review'
 import { Session } from '../models/Session'
 import { distanceKm, round } from '../services/geo.service'
 import { availableSlots } from '../services/schedule.service'
@@ -45,6 +46,8 @@ export async function toEnrollmentViews(enrollments: EnrollmentDoc[]) {
   // El enlace de la reunión solo se entrega en inscripciones activas virtuales
   const offers = await Offer.find({ _id: { $in: enrollments.filter((item) => item.status === 'active' && item.mode === 'virtual').map((item) => item.offer) } })
   const linkByOffer = new Map(offers.map((offer) => [String(offer._id), offer.meetingUrl || null]))
+  const reviews = await Review.find({ enrollment: { $in: enrollments.map((enrollment) => enrollment._id) } })
+  const reviewBy = new Map(reviews.map((review) => [String(review.enrollment), { rating: review.rating, comment: review.comment, createdAt: review.createdAt }]))
   const nextByEnrollment = new Map<string, Date>()
   for (const session of upcoming) {
     const key = String(session.enrollment)
@@ -78,6 +81,9 @@ export async function toEnrollmentViews(enrollments: EnrollmentDoc[]) {
     charge: enrollment.charge ? { kind: enrollment.charge.kind, classes: enrollment.charge.classes, travel: enrollment.charge.travel, total: enrollment.charge.total, dueAt: enrollment.charge.dueAt, startDate: enrollment.charge.startDate } : null,
     // Se puede renovar cuando el curso es por planes, está activo, no hay cobro abierto y queda a lo sumo una semana de clases
     canRenew: enrollment.status === 'active' && !!enrollment.weeks && !enrollment.charge && (enrollment.totalSessions ?? 0) - (completedBy.get(String(enrollment._id)) ?? 0) <= (enrollment.sessionsPerWeek ?? 1),
+    // Reseña del estudiante (si ya calificó) y si puede hacerlo ahora: al menos una clase realizada y sin reseña previa
+    review: reviewBy.get(String(enrollment._id)) ?? null,
+    canReview: !reviewBy.has(String(enrollment._id)) && (completedBy.get(String(enrollment._id)) ?? 0) > 0,
     // Clases ya agendadas o realizadas (no cuentan las canceladas) y cuántas se realizaron
     sessionsUsed: scheduledBy.get(String(enrollment._id)) ?? 0,
     sessionsCompleted: completedBy.get(String(enrollment._id)) ?? 0,
@@ -275,6 +281,10 @@ async function closeEnrollment(req: Request<{ id: string }>, res: Response, stat
     await notify(byStudent
       ? { user: enrollment.tutor, type: 'enrollment_cancelled', title: 'Solicitud cancelada', message: `${who} canceló su solicitud en «${enrollment.offerTitle}».`, link: '/mis-estudiantes' }
       : { user: enrollment.student, type: 'enrollment_cancelled', title: 'Inscripción cancelada', message: `${who} canceló tu inscripción en «${enrollment.offerTitle}».`, link: '/mis-cursos' })
+  }
+  if (status === 'finished') {
+    const who = await userName(req.auth?.sub ?? '')
+    await notify({ user: enrollment.student, type: 'enrollment_finished', title: 'Curso finalizado', message: `${who} dio por finalizado «${enrollment.offerTitle}». Las clases pendientes se cancelaron; si tomaste alguna, puedes dejar tu reseña.`, link: '/mis-cursos' })
   }
   const [view] = await toEnrollmentViews([enrollment as unknown as EnrollmentDoc])
   res.json({ enrollment: view })

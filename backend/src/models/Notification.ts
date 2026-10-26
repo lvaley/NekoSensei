@@ -6,6 +6,7 @@ export const NOTIFICATION_TYPES = [
   'enrollment_accepted',
   'enrollment_rejected',
   'enrollment_cancelled',
+  'enrollment_finished',
   'payment_required',
   'payment_received',
   'payment_expired',
@@ -16,6 +17,7 @@ export const NOTIFICATION_TYPES = [
   'reschedule_declined',
   'reschedule_accepted',
   'reschedule_rejected',
+  'review_received',
 ] as const
 export type NotificationType = (typeof NOTIFICATION_TYPES)[number]
 
