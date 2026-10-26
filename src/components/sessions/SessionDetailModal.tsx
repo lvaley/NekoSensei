@@ -114,10 +114,7 @@ export function SessionDetailModal({ session, viewerRole, onClose }: SessionDeta
             {detail.place.address && (
               <section className="session-detail__block">
                 <h3 className="h6">Lugar de la clase</h3>
-                <p className="mb-0">
-                  <i className="bi bi-geo-alt me-1" aria-hidden="true" />
-                  {detail.place.address}
-                </p>
+                <p className="mb-0">{detail.place.address}</p>
               </section>
             )}
 
@@ -136,19 +133,30 @@ export function SessionDetailModal({ session, viewerRole, onClose }: SessionDeta
 
             <section className="session-detail__block">
               <h3 className="h6">Costo de la clase</h3>
-              <ul className="session-detail__stats">
-                <li>
-                  Clase: <strong>{money(detail.price.classCost)}</strong> ({money(detail.price.hourlyRate)} por hora)
-                </li>
+              <dl className="cost-summary">
+                <div>
+                  <dt>
+                    Clase
+                    <small>{money(detail.price.hourlyRate)} por hora</small>
+                  </dt>
+                  <dd>{money(detail.price.classCost)}</dd>
+                </div>
                 {detail.price.travelCost !== null && (
-                  <li>
-                    Traslado: <strong>{money(detail.price.travelCost)}</strong> ({money(detail.price.travelFeePerKm ?? 0)} por km × {travel?.straightKm} km)
-                  </li>
+                  <div>
+                    <dt>
+                      Traslado
+                      <small>
+                        {money(detail.price.travelFeePerKm ?? 0)} por km × {travel?.straightKm} km
+                      </small>
+                    </dt>
+                    <dd>{money(detail.price.travelCost)}</dd>
+                  </div>
                 )}
-                <li>
-                  Total: <strong>{money(detail.price.total)}</strong>
-                </li>
-              </ul>
+                <div className="cost-summary__total">
+                  <dt>Total</dt>
+                  <dd>{money(detail.price.total)}</dd>
+                </div>
+              </dl>
             </section>
           </>
         )}

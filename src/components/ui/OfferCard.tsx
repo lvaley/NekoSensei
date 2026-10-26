@@ -8,6 +8,7 @@ import { money } from '../../utils/money'
 import { Avatar } from './Avatar'
 import { ClassTypeBadge } from './ClassTypeBadge'
 import { LevelBadge } from './LevelBadge'
+import { StarRating } from './StarRating'
 
 interface OfferCardProps {
   offer: PublicOffer
@@ -32,7 +33,7 @@ function TravelNote({ offer }: { offer: PublicOffer }) {
   }
   return (
     <p className="offer-card__travel">
-      <i className="bi bi-geo-alt me-1" aria-hidden="true" />A {offer.distanceKm} km de ti · traslado estimado <strong>{money(offer.travelCost ?? 0)}</strong>
+      A {offer.distanceKm} km de ti · traslado estimado <strong>{money(offer.travelCost ?? 0)}</strong>
     </p>
   )
 }
@@ -78,7 +79,12 @@ export function OfferCard({ offer, showTutor = true, footer }: OfferCardProps) {
       {showTutor && (
         <Link to={`/tutores/${offer.tutor.id}`} className="offer-card__tutor">
           <Avatar name={offer.tutor.name} picture={offer.tutor.picture} size={36} />
-          <span>{offer.tutor.name}</span>
+          <span>
+            {offer.tutor.name}
+            <span className="d-block">
+              <StarRating value={offer.tutor.rating} count={offer.tutor.reviewCount} />
+            </span>
+          </span>
           <i className="bi bi-arrow-right ms-auto" aria-hidden="true" />
         </Link>
       )}

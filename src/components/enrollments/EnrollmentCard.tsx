@@ -6,6 +6,7 @@ import { DAY_SHORT } from '../../utils/availability'
 import { scopeLabel } from '../../utils/course'
 import { formatDate, formatDateTime } from '../../utils/dates'
 import { money } from '../../utils/money'
+import { StarRating } from '../ui/StarRating'
 import { Avatar } from '../ui/Avatar'
 import { ClassTypeBadge } from '../ui/ClassTypeBadge'
 import { LevelBadge } from '../ui/LevelBadge'
@@ -64,6 +65,11 @@ export function EnrollmentCard({ enrollment, viewerRole, children }: EnrollmentC
         <p className="small mb-2">
           <i className="bi bi-arrow-repeat me-1" aria-hidden="true" />
           Bloque {enrollment.plan.cycle} (renovado)
+        </p>
+      )}
+      {enrollment.review && (
+        <p className="small mb-2">
+          {viewerRole === 'student' ? 'Tu calificación' : 'Calificación del estudiante'}: <StarRating value={enrollment.review.rating} />
         </p>
       )}
       {enrollment.charge && (

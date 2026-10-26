@@ -35,16 +35,25 @@ export function TravelPreviewPanel({ url }: { url: string }) {
     <div>
       <TravelInfo travel={travel} />
       {price.perClass !== null && (
-        <p className="mb-0 mt-2">
-          Traslado estimado: <strong>{money(price.perClass)}</strong> por clase ({money(price.feePerKm ?? 0)} por km × {travel.straightKm} km)
+        <dl className="cost-summary mt-3">
+          <div>
+            <dt>
+              Traslado estimado por clase
+              <small>
+                {money(price.feePerKm ?? 0)} × {travel.straightKm} km
+              </small>
+            </dt>
+            <dd>{money(price.perClass)}</dd>
+          </div>
           {price.totalSessions > 1 && price.course !== null && (
-            <>
-              {' '}
-              · <strong>{money(price.course)}</strong> en las {price.totalSessions} clases
-            </>
+            <div className="cost-summary__total">
+              <dt>
+                Traslado en las {price.totalSessions} clases
+              </dt>
+              <dd>{money(price.course)}</dd>
+            </div>
           )}
-          .
-        </p>
+        </dl>
       )}
     </div>
   )

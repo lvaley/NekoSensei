@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import type { PublicTutor } from '../../types'
 import { Avatar } from './Avatar'
 import { money } from '../../utils/money'
+import { StarRating } from './StarRating'
 
 export function TutorCard({ tutor }: { tutor: PublicTutor }) {
   return (
@@ -15,6 +16,9 @@ export function TutorCard({ tutor }: { tutor: PublicTutor }) {
             {tutor.distanceKm !== null && ` · a ${tutor.distanceKm} km`}
           </small>
         </div>
+      </div>
+      <div className="mb-2">
+        <StarRating value={tutor.rating} count={tutor.reviewCount} />
       </div>
       <p className="text-secondary tutor-card__bio">{tutor.bio}</p>
       <div className="mode-list mb-3">

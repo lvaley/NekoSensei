@@ -1,33 +1,56 @@
-import { Container, Nav, NavDropdown, Navbar as BsNavbar } from 'react-bootstrap'
-import { Link, NavLink, useNavigate } from 'react-router-dom'
-import { SITE } from '../../config/site'
-import { useAuth } from '../../hooks/useAuth'
-import { NotificationBell } from './NotificationBell'
+import {
+  Container,
+  Nav,
+  NavDropdown,
+  Navbar as BsNavbar,
+} from "react-bootstrap";
+import { Link, NavLink, useNavigate } from "react-router-dom";
+import { SITE } from "../../config/site";
+import { useAuth } from "../../hooks/useAuth";
+import { ChatButton } from "./ChatButton";
+import { NotificationBell } from "./NotificationBell";
 
 interface NavItem {
-  to: string
-  label: string
-  end?: boolean
+  to: string;
+  label: string;
+  end?: boolean;
 }
 
-const HOME: NavItem = { to: '/', label: 'Inicio', end: true }
-const ABOUT: NavItem = { to: '/nosotros', label: 'Nosotros' }
+const HOME: NavItem = { to: "/", label: "Inicio", end: true };
+const ABOUT: NavItem = { to: "/nosotros", label: "Nosotros" };
 
-// Cada rol ve su propio menú: el estudiante estudia y explora, el tutor gestiona ofertas y alumnos
+// Cada rol ve su propio menú: el estudiante estudia y explora, el tutor gestiona ofertas y alumnos.
+// Inicio y Nosotros son páginas de presentación: solo las ven visitantes y administradores (el logo sigue llevando al inicio)
 function navLinks(role?: string): NavItem[] {
-  if (role === 'student') return [HOME, { to: '/mis-cursos', label: 'Mis cursos' }, { to: '/agenda', label: 'Agenda' }, { to: '/tutores', label: 'Tutores' }, { to: '/cursos', label: 'Cursos' }, ABOUT]
-  if (role === 'tutor') return [HOME, { to: '/mis-ofertas', label: 'Mis ofertas' }, { to: '/mis-estudiantes', label: 'Mis estudiantes' }, { to: '/agenda', label: 'Agenda' }, ABOUT]
-  return [HOME, { to: '/tutores', label: 'Tutores' }, { to: '/cursos', label: 'Cursos' }, ABOUT]
+  if (role === "student")
+    return [
+      { to: "/mis-cursos", label: "Mis cursos" },
+      { to: "/agenda", label: "Agenda" },
+      { to: "/tutores", label: "Tutores" },
+      { to: "/cursos", label: "Cursos" },
+    ];
+  if (role === "tutor")
+    return [
+      { to: "/mis-ofertas", label: "Mis ofertas" },
+      { to: "/mis-estudiantes", label: "Mis estudiantes" },
+      { to: "/agenda", label: "Agenda" },
+    ];
+  return [
+    HOME,
+    { to: "/tutores", label: "Tutores" },
+    { to: "/cursos", label: "Cursos" },
+    ABOUT,
+  ];
 }
 
 export function Navbar() {
-  const { user, logout } = useAuth()
-  const navigate = useNavigate()
+  const { user, loading, logout } = useAuth();
+  const navigate = useNavigate();
 
   const handleLogout = () => {
-    logout()
-    navigate('/login', { replace: true })
-  }
+    logout();
+    navigate("/login", { replace: true });
+  };
 
   return (
     <BsNavbar expand="lg" sticky="top" className="site-navbar">
@@ -38,7 +61,10 @@ export function Navbar() {
 
         {/* La campanita queda siempre visible: junto al menú en móvil y al final de la barra en escritorio */}
         {user && (
-          <div className="order-1 order-lg-3 ms-auto ms-lg-1 me-2 me-lg-0">
+          <div className="order-1 order-lg-3 ms-auto ms-lg-1 me-2 me-lg-0 d-flex align-items-center">
+            {(user.role === "student" || user.role === "tutor") && (
+              <ChatButton />
+            )}
             <NotificationBell />
           </div>
         )}
@@ -46,7 +72,10 @@ export function Navbar() {
         <BsNavbar.Toggle aria-controls="main-nav" className="order-2" />
 
         {/* Todos los enlaces y el botón quedan alineados a la derecha en escritorio */}
-        <BsNavbar.Collapse id="main-nav" className="justify-content-lg-end order-3 order-lg-2">
+        <BsNavbar.Collapse
+          id="main-nav"
+          className="justify-content-lg-end order-3 order-lg-2"
+        >
           <Nav className="align-items-lg-center">
             {navLinks(user?.role).map((link) => (
               <Nav.Link key={link.to} as={NavLink} to={link.to} end={link.end}>
@@ -54,7 +83,11 @@ export function Navbar() {
               </Nav.Link>
             ))}
             {user ? (
-              <NavDropdown title={user.name.split(' ')[0]} id="user-menu" align="end">
+              <NavDropdown
+                title={user.name.split(" ")[0]}
+                id="user-menu"
+                align="end"
+              >
                 <NavDropdown.Item as={Link} to="/panel">
                   Mi panel
                 </NavDropdown.Item>
@@ -63,12 +96,12 @@ export function Navbar() {
                     Mi perfil
                   </NavDropdown.Item>
                 )}
-                {(user.role === 'student' || user.role === 'tutor') && (
+                {(user.role === "student" || user.role === "tutor") && (
                   <NavDropdown.Item as={Link} to="/pagos">
-                    {user.role === 'tutor' ? 'Pagos recibidos' : 'Mis pagos'}
+                    {user.role === "tutor" ? "Pagos recibidos" : "Mis pagos"}
                   </NavDropdown.Item>
                 )}
-                {user.role === 'admin' && (
+                {user.role === "admin" && (
                   <NavDropdown.Item as={Link} to="/admin">
                     Administración
                   </NavDropdown.Item>
@@ -79,12 +112,14 @@ export function Navbar() {
                 </NavDropdown.Item>
               </NavDropdown>
             ) : (
-              <Nav.Link as={NavLink} to="/login">
-                Iniciar sesión
-              </Nav.Link>
+              !loading && (
+                <Nav.Link as={NavLink} to="/login">
+                  Iniciar sesión
+                </Nav.Link>
+              )
             )}
           </Nav>
-          {!user && (
+          {!user && !loading && (
             <Link to="/registro" className="btn btn-cta ms-lg-2">
               Comenzar
             </Link>
@@ -92,5 +127,5 @@ export function Navbar() {
         </BsNavbar.Collapse>
       </Container>
     </BsNavbar>
-  )
+  );
 }

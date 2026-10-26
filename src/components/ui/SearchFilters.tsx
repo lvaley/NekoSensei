@@ -46,7 +46,7 @@ export function SearchFilters({ params, onChange, showDistance, total }: SearchF
     onChange(next)
   }
 
-  const hasFilters = ['q', 'category', 'mode', 'level', 'classType', 'maxPrice', 'maxKm'].some((key) => params.has(key))
+  const hasFilters = ['q', 'category', 'mode', 'level', 'classType', 'maxPrice', 'maxKm', 'minRating'].some((key) => params.has(key))
   const clear = () => {
     setText('')
     onChange(new URLSearchParams())
@@ -114,6 +114,15 @@ export function SearchFilters({ params, onChange, showDistance, total }: SearchF
             onChange={(event) => setParam('maxPrice', event.target.value)}
             placeholder="Sin límite"
           />
+        </Col>
+        <Col xs={6} lg={showDistance ? 2 : 3}>
+          <Form.Label htmlFor="f-rating">Calificación</Form.Label>
+          <Form.Select id="f-rating" value={params.get('minRating') ?? ''} onChange={(event) => setParam('minRating', event.target.value)}>
+            <option value="">Cualquiera</option>
+            <option value="4.5">4.5 ★ o más</option>
+            <option value="4">4 ★ o más</option>
+            <option value="3">3 ★ o más</option>
+          </Form.Select>
         </Col>
         {showDistance && (
           <Col xs={6} lg={3}>
