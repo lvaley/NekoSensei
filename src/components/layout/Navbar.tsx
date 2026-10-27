@@ -20,7 +20,7 @@ const HOME: NavItem = { to: "/", label: "Inicio", end: true };
 const ABOUT: NavItem = { to: "/nosotros", label: "Nosotros" };
 
 // Cada rol ve su propio menú: el estudiante estudia y explora, el tutor gestiona ofertas y alumnos.
-// Inicio y Nosotros son páginas de presentación: solo las ven visitantes y administradores (el logo sigue llevando al inicio)
+// Inicio y Nosotros son páginas de presentación: solo las ven los visitantes (el logo sigue llevando al inicio)
 function navLinks(role?: string): NavItem[] {
   if (role === "student")
     return [
@@ -34,6 +34,13 @@ function navLinks(role?: string): NavItem[] {
       { to: "/mis-ofertas", label: "Mis ofertas" },
       { to: "/mis-estudiantes", label: "Mis estudiantes" },
       { to: "/agenda", label: "Agenda" },
+    ];
+  // El administrador entra a sus secciones desde el panel; en la barra tiene el panel y el catálogo
+  if (role === "admin")
+    return [
+      { to: "/panel", label: "Panel" },
+      { to: "/tutores", label: "Tutores" },
+      { to: "/cursos", label: "Cursos" },
     ];
   return [
     HOME,
@@ -52,10 +59,24 @@ export function Navbar() {
     navigate("/login", { replace: true });
   };
 
+  // Cuenta suspendida: la barra solo deja cerrar sesión
+  if (user?.suspension) {
+    return (
+      <BsNavbar sticky="top" className="site-navbar">
+        <Container>
+          <span className="brand navbar-brand">{SITE.name}</span>
+          <button type="button" className="btn btn-outline-dark btn-sm" onClick={handleLogout}>
+            Cerrar sesión
+          </button>
+        </Container>
+      </BsNavbar>
+    );
+  }
+
   return (
     <BsNavbar expand="lg" sticky="top" className="site-navbar">
       <Container>
-        <BsNavbar.Brand as={Link} to="/" className="brand">
+        <BsNavbar.Brand as={Link} to={user ? '/panel' : '/'} className="brand">
           {SITE.name}
         </BsNavbar.Brand>
 
@@ -88,9 +109,11 @@ export function Navbar() {
                 id="user-menu"
                 align="end"
               >
-                <NavDropdown.Item as={Link} to="/panel">
-                  Mi panel
-                </NavDropdown.Item>
+                {user.role !== "admin" && (
+                  <NavDropdown.Item as={Link} to="/panel">
+                    Mi panel
+                  </NavDropdown.Item>
+                )}
                 {user.onboardingCompleted && (
                   <NavDropdown.Item as={Link} to="/perfil">
                     Mi perfil

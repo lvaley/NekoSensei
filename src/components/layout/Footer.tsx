@@ -35,6 +35,9 @@ export function Footer() {
                 <Link to="/terminos">Términos y condiciones</Link>
               </li>
               <li>
+                <Link to="/convivencia">Normas de convivencia</Link>
+              </li>
+              <li>
                 <Link to="/status">Estado del sistema</Link>
               </li>
             </ul>

@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import type { ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import { MODE_LABELS } from '../../content/modes'
@@ -6,6 +7,7 @@ import { DAY_SHORT } from '../../utils/availability'
 import { scopeLabel } from '../../utils/course'
 import { formatDate, formatDateTime } from '../../utils/dates'
 import { money } from '../../utils/money'
+import { ReportModal } from '../reports/ReportModal'
 import { StarRating } from '../ui/StarRating'
 import { Avatar } from '../ui/Avatar'
 import { ClassTypeBadge } from '../ui/ClassTypeBadge'
@@ -31,6 +33,7 @@ interface EnrollmentCardProps {
 export function EnrollmentCard({ enrollment, viewerRole, children }: EnrollmentCardProps) {
   const other = viewerRole === 'student' ? enrollment.tutor : enrollment.student
   const status = STATUS_LABEL[enrollment.status]
+  const [reporting, setReporting] = useState(false)
 
   return (
     <article className="surface-card enrollment-card">
@@ -109,6 +112,11 @@ export function EnrollmentCard({ enrollment, viewerRole, children }: EnrollmentC
         </p>
       )}
       {children && <div className="d-flex gap-2 flex-wrap mt-auto pt-3">{children}</div>}
+      <button type="button" className="enrollment-card__report" onClick={() => setReporting(true)}>
+        <i className="bi bi-flag me-1" aria-hidden="true" />
+        Denunciar a {viewerRole === 'student' ? 'este tutor' : 'este estudiante'}
+      </button>
+      {reporting && <ReportModal person={other} onClose={() => setReporting(false)} />}
     </article>
   )
 }

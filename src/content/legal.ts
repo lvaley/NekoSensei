@@ -200,3 +200,147 @@ export const termsSections: LegalSection[] = [
     ],
   },
 ]
+
+export const conductSections: LegalSection[] = [
+  {
+    id: 'proposito',
+    title: 'Para qué existen estas normas',
+    paragraphs: [
+      'Neko Sensei conecta a estudiantes con tutores para que aprendan y enseñen en un ambiente seguro, respetuoso y confiable. Estas normas explican cómo esperamos que se comporte cada persona dentro de la plataforma y qué ocurre cuando no se cumplen.',
+      'Se aplican a todas las cuentas (estudiantes, tutores y administradores) y a todo lo que ocurre a través de Neko Sensei: perfiles, solicitudes, chat, clases, pagos, reseñas y denuncias. Al crear una cuenta aceptas cumplirlas, junto con los términos y condiciones y la política de privacidad.',
+    ],
+  },
+  {
+    id: 'principios',
+    title: 'Principios que nos guían',
+    items: [
+      'Respeto: tratamos a las demás personas como queremos ser tratados, sin importar su edad, género, origen, creencias o nivel de conocimiento.',
+      'Honestidad: lo que publicamos y prometemos es verdadero y se cumple.',
+      'Seguridad: nadie debe sentirse en riesgo, ni en una clase virtual ni en una presencial.',
+      'Transparencia: los precios, horarios y condiciones se acuerdan a la vista y dentro de la plataforma.',
+      'Responsabilidad: cada persona responde por sus actos y por el uso que hace de su cuenta.',
+    ],
+  },
+  {
+    id: 'todos',
+    title: 'Lo que se espera de todas las personas',
+    items: [
+      'Usar un lenguaje cortés en el chat, en las clases y en las reseñas, incluso cuando haya desacuerdos.',
+      'Brindar información real y actualizada en el perfil, sin suplantar a otra persona ni crear cuentas con datos falsos.',
+      'Respetar la privacidad ajena: no compartir teléfonos, direcciones, fotos, conversaciones ni documentos de otra persona sin su permiso.',
+      'No grabar clases, ni compartir su contenido, sin el consentimiento de las personas que participan.',
+      'Usar la plataforma solo para fines educativos y de coordinación de clases.',
+      'Proteger tu cuenta: no prestes tu acceso a otras personas y avisa si sospechas que alguien más lo usa.',
+    ],
+  },
+  {
+    id: 'estudiantes',
+    title: 'Compromisos de los estudiantes',
+    items: [
+      'Presentarte a tus clases en el horario acordado y con puntualidad. Si no puedes asistir, solicita reagendar con tiempo desde la agenda.',
+      'Pagar el bloque dentro de las 48 horas posteriores a la aceptación de tu solicitud; pasado ese plazo la inscripción vence y se libera el horario.',
+      'En clases a domicilio, indicar una dirección real y estar disponible en ella a la hora acordada.',
+      'Tratar al tutor con respeto y seguir las indicaciones razonables de la clase.',
+      'Escribir reseñas honestas y basadas en tu experiencia real: no se editan ni se borran después de enviarlas.',
+    ],
+  },
+  {
+    id: 'tutores',
+    title: 'Compromisos de los tutores',
+    items: [
+      'Mantener tu perfil, tu hoja de vida y tus ofertas veraces: no declares estudios, experiencia ni resultados que no puedas comprobar.',
+      'Fijar tarifas, horarios y zona de cobertura claros, y respetar lo que ofreces en cada curso.',
+      'Responder las solicitudes con prontitud y aceptar solo las clases que realmente puedes impartir.',
+      'Llegar puntual a las clases y dictarlas completas; si necesitas cambiar un horario, propón una nueva fecha desde la plataforma.',
+      'Cuidar la integridad de los estudiantes: nunca los presiones, intimides ni los expongas a contenido inapropiado.',
+      'No cobrar de más ni pedir dinero adicional fuera de lo acordado en la inscripción.',
+    ],
+  },
+  {
+    id: 'clases',
+    title: 'Clases virtuales y presenciales',
+    items: [
+      'Las clases virtuales se realizan en el enlace de reunión que comparte el tutor; no se deben distribuir ni usar para otros fines.',
+      'Las clases presenciales deben hacerse en lugares adecuados. Si no te sientes seguro, puedes cancelar o pedir cambiar el lugar y reportarlo.',
+      'En las clases a domicilio, el estudiante conoce la dirección del tutor solo de forma aproximada hasta que la inscripción se acepta; esa información es privada y solo se usa para llegar a la clase.',
+      'Las clases grupales requieren respeto y colaboración entre todos los participantes.',
+    ],
+  },
+  {
+    id: 'pagos',
+    title: 'Pagos y acuerdos dentro de la plataforma',
+    items: [
+      'Los pagos, renovaciones y acuerdos de las clases contratadas en Neko Sensei se realizan dentro de la plataforma.',
+      'No ofrezcas ni aceptes pagos por fuera para evitar el sistema, ni redirijas a otra persona a otro medio para cobrarle.',
+      'No intentes engañar con cobros indebidos, comprobantes falsos o información de pago ajena.',
+    ],
+  },
+  {
+    id: 'comunicacion',
+    title: 'Comunicación y reseñas',
+    items: [
+      'El chat es para coordinar y resolver dudas sobre las clases. No lo uses para publicidad, cadenas, spam ni mensajes ajenos al aprendizaje.',
+      'No envíes contenido ofensivo, discriminatorio, violento o de carácter sexual.',
+      'No amenaces ni acoses, tampoco después de terminar un curso.',
+      'No ofrezcas ni pidas reseñas a cambio de beneficios, ni publiques reseñas falsas para beneficiar o perjudicar a alguien.',
+    ],
+  },
+  {
+    id: 'prohibido',
+    title: 'Conductas que no se permiten',
+    paragraphs: ['Las siguientes conductas son faltas graves y pueden llevar directamente a la suspensión de la cuenta:'],
+    items: [
+      'Acoso, amenazas, discriminación o cualquier forma de violencia o trato degradante.',
+      'Fraude, estafa, cobros indebidos o suplantación de identidad.',
+      'Contenido o comportamientos de carácter sexual hacia otra persona.',
+      'Compartir datos personales de otra persona sin su autorización.',
+      'Hacer denuncias falsas o malintencionadas para perjudicar a alguien.',
+      'Intentar vulnerar, saturar o usar de forma indebida el sistema o las cuentas de otras personas.',
+      'Incumplir de forma reiterada las clases acordadas sin aviso ni justificación.',
+    ],
+  },
+  {
+    id: 'denuncias',
+    title: 'Cómo denunciar',
+    paragraphs: [
+      'Si una persona con la que tienes una inscripción incumple estas normas, puedes denunciarla desde la tarjeta del curso, en «Mis cursos» (estudiantes) o «Mis estudiantes» (tutores), con la opción «Denunciar».',
+      'Elige el motivo y describe lo ocurrido con el mayor detalle posible (fechas, mensajes, lugar). La denuncia solo la ve el equipo de Neko Sensei: no se le informa a la persona denunciada. Te avisaremos cuando el equipo la cierre.',
+      'Si estás en una situación de peligro inmediato, contacta primero a las autoridades locales; la plataforma no reemplaza ese apoyo.',
+    ],
+  },
+  {
+    id: 'revision',
+    title: 'Cómo revisamos las denuncias',
+    items: [
+      'El administrador revisa cada denuncia considerando lo que describe quien denuncia y la actividad registrada en la plataforma.',
+      'Una denuncia pasa por los estados pendiente, en revisión y, al cerrarse, resuelta o descartada, siempre con una nota para quien la presentó.',
+      'Las denuncias se tratan con confidencialidad y buena fe: una persona nunca es sancionada solo por haber sido denunciada.',
+    ],
+  },
+  {
+    id: 'suspension',
+    title: 'Suspensión de cuentas',
+    paragraphs: [
+      'Si se comprueba que una cuenta incumple estas normas, el administrador puede suspenderla indicando el motivo. Las faltas graves pueden suspenderse de inmediato.',
+      'Una cuenta suspendida puede iniciar sesión, pero solo ve una pantalla con el motivo y la fecha de la suspensión, el enlace a estas normas y un formulario de apelación. Mientras dure la suspensión no puede usar el resto de la plataforma; si es tutor, deja de aparecer en el catálogo y no recibe nuevas inscripciones.',
+    ],
+  },
+  {
+    id: 'apelacion',
+    title: 'Apelación',
+    paragraphs: [
+      'Si crees que la suspensión fue un error o ya corregiste la situación, puedes enviar una apelación explicando tu caso con claridad y aportando el contexto necesario. Se revisa una apelación a la vez.',
+      'Tu cuenta permanece suspendida hasta que el administrador acepte la apelación. Si la rechaza, verás el motivo en la misma pantalla y podrás enviar una nueva apelación con más información.',
+    ],
+  },
+  {
+    id: 'cambios',
+    title: 'Cambios en estas normas',
+    paragraphs: ['Podemos actualizar estas normas para mejorar la convivencia o adaptarlas a nuevas funciones de la plataforma. La fecha de la última actualización aparece al inicio de esta página y, si el cambio es importante, te lo avisaremos.'],
+  },
+  {
+    id: 'contacto',
+    title: 'Dudas o sugerencias',
+    paragraphs: ['Si tienes preguntas sobre estas normas o quieres hacer una sugerencia, escríbenos desde la página de contacto.'],
+  },
+]

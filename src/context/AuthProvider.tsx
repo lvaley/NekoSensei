@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import type { ReactNode } from 'react'
-import { api, NOTICE_KEY, TOKEN_KEY } from '../services/api'
+import { api, NOTICE_KEY, SUSPENDED_EVENT, TOKEN_KEY } from '../services/api'
 import type { AuthResponse, AuthUser } from '../types'
 import { AuthContext } from './auth-context'
 import type { AuthContextValue } from './auth-context'
@@ -28,6 +28,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => {
       cancelled = true
     }
+  }, [])
+
+  // Si el administrador suspende la cuenta con la sesión abierta, se relee el usuario para mostrar la pantalla de suspensión
+  useEffect(() => {
+    const refresh = () => {
+      api
+        .get<{ user: AuthUser }>('/auth/me')
+        .then((res) => setUser(res.data.user))
+        .catch(() => undefined)
+    }
+    window.addEventListener(SUSPENDED_EVENT, refresh)
+    return () => window.removeEventListener(SUSPENDED_EVENT, refresh)
   }, [])
 
   const loginWithGoogle = useCallback<AuthContextValue['loginWithGoogle']>(async (credential, role) => {
