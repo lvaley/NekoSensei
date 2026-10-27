@@ -212,6 +212,16 @@ La ruta no espera a que exista una clase: en un curso **a domicilio**, el estudi
 
 El perfil de cada tutor tiene el botón **Compartir por WhatsApp**, que abre `https://wa.me/?text=…` con el resumen (nombre, categorías, calificación, tarifa base, número de cursos) y el enlace directo al perfil en la plataforma.
 
+### Denuncias, suspensión y apelaciones (v0.7)
+
+- **Quién denuncia:** estudiantes y tutores, solo contra la otra persona de una inscripción en común (el botón *Denunciar* está en la tarjeta del curso, en *Mis cursos* y *Mis estudiantes*). Motivo (acoso, fraude, contenido inapropiado, incumplimiento, suplantación u otro) y descripción de 10 a 1000 caracteres. Solo una denuncia abierta por pareja; la persona denunciada no recibe aviso.
+- **Bandeja del administrador** (`/admin/denuncias`): denuncias *por revisar* y *cerradas*, con denunciante, denunciado y cuántas denuncias acumula. Estados: pendiente → en revisión → resuelta o descartada (estas dos con una nota que recibe quien denunció). Los administradores reciben un aviso por cada denuncia y apelación nueva.
+- **Suspender una cuenta** (desde una denuncia o desde *Usuarios*): motivo de 10 a 500 caracteres. Al suspender, las denuncias abiertas contra esa persona quedan resueltas. No se puede suspender a un administrador.
+- **Qué ve la persona suspendida:** puede iniciar sesión, pero toda la navegación se reduce a una única pantalla de *Cuenta suspendida* con el **motivo**, la **fecha**, un enlace a las **normas de convivencia** (`/convivencia`) y un **formulario de apelación** (20 a 1000 caracteres). El resto de la API responde `403` con `code: "account_suspended"` y el chat en tiempo real rechaza su conexión. Si es tutor, deja de aparecer en el catálogo y nadie puede inscribirse con él.
+- **Apelación:** una a la vez. El administrador la **acepta** (la cuenta se reactiva y se avisa a la persona) o la **rechaza** con una respuesta que la persona ve en su pantalla; después puede enviar otra apelación. La cuenta sigue bloqueada hasta que se acepte una apelación (el administrador también puede reactivarla directamente).
+- **Avisos a administradores (campanita):** nueva denuncia, nueva apelación, perfil de tutor por revisar (nuevo o reenviado tras un rechazo) y mensaje de contacto. Los mensajes de contacto se leen en `/admin/mensajes` (`GET /api/admin/contact-messages`).
+- Endpoints: `POST /api/reports`; administrador: `GET /api/admin/reports?status=`, `PATCH /api/admin/reports/:id`, `GET /api/admin/suspensions`, `POST /api/admin/users/:id/suspend`, `POST /api/admin/users/:id/reactivate`, `PATCH /api/admin/users/:id/appeal`; persona suspendida: `POST /api/suspension/appeal` (y `GET /api/auth/me`, que incluye la suspensión).
+
 ## Versiones
 
 | Versión | Estado | Contenido |
@@ -222,6 +232,6 @@ El perfil de cada tutor tiene el botón **Compartir por WhatsApp**, que abre `ht
 | v0.4 | ✅ | Ofertas de tutores, catálogo público de tutores y cursos con búsqueda, mapa, distancia y costo de traslado |
 | v0.5 | ✅ | Inscripciones con aprobación del tutor, agenda con calendario, menús por rol |
 | v0.6 | ✅ | Reseñas y calificación promedio, chat en tiempo real (Socket.io), compartir perfil por WhatsApp |
-| v0.7 | ⏳ | Denuncias y suspensión |
+| v0.7 | ✅ | Denuncias entre estudiantes y tutores, bandeja del administrador, suspensión de cuentas y apelaciones |
 | v0.8 | ⏳ | Reportería |
 | v1.0 | ⏳ | Manuales y entrega final |
