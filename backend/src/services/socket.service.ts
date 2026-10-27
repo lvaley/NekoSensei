@@ -1,6 +1,7 @@
 import type { Server as HttpServer } from 'http'
 import { Server } from 'socket.io'
 import { env } from '../config/env'
+import { User } from '../models/User'
 import { markRead, sendMessage, setIo, userRoom } from './chat.service'
 import { verifyToken } from './token.service'
 
@@ -10,10 +11,13 @@ export function attachSocket(server: HttpServer): Server {
   const io = new Server(server, { cors: { origin: env.clientUrl } })
   setIo(io)
 
-  io.use((socket, next) => {
+  io.use(async (socket, next) => {
     try {
       const token = typeof socket.handshake.auth?.token === 'string' ? socket.handshake.auth.token : ''
-      socket.data.userId = verifyToken(token).sub
+      const userId = verifyToken(token).sub
+      // Una cuenta suspendida no entra al chat
+      if ((await User.findById(userId).select('suspended'))?.suspended) return next(new Error('Cuenta suspendida'))
+      socket.data.userId = userId
       next()
     } catch {
       next(new Error('Sesión inválida o expirada'))

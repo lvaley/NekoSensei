@@ -7,7 +7,7 @@ import { User } from '../models/User'
 // Cifras públicas para la página de inicio: tutores aprobados, cursos activos y calificación,
 // más cuántos cursos activos hay en cada categoría principal (incluye sus subcategorías)
 export async function getPublicStats(_req: Request, res: Response): Promise<void> {
-  const tutors = await User.find({ role: 'tutor', 'tutorProfile.status': 'approved' }).select('_id')
+  const tutors = await User.find({ role: 'tutor', 'tutorProfile.status': 'approved', suspended: { $ne: true } }).select('_id')
   const tutorIds = tutors.map((tutor) => tutor._id)
   const [offers, reviews, categories] = await Promise.all([
     Offer.find({ active: true, tutor: { $in: tutorIds } }).select('category'),

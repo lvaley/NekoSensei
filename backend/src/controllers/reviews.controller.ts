@@ -15,7 +15,7 @@ const shortName = (name: string) => {
 
 // Reseñas públicas de un tutor, de la más reciente a la más antigua
 export async function listTutorReviews(req: Request<{ id: string }>, res: Response): Promise<void> {
-  const tutor = isValidObjectId(req.params.id) ? await User.findOne({ _id: req.params.id, role: 'tutor', 'tutorProfile.status': 'approved' }) : null
+  const tutor = isValidObjectId(req.params.id) ? await User.findOne({ _id: req.params.id, role: 'tutor', 'tutorProfile.status': 'approved', suspended: { $ne: true } }) : null
   if (!tutor) {
     res.status(404).json({ message: 'Tutor no encontrado' })
     return

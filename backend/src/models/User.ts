@@ -31,6 +31,26 @@ export interface ITutorProfile {
   reviewedAt?: Date
 }
 
+export const APPEAL_STATUSES = ['pending', 'rejected'] as const
+export type AppealStatus = (typeof APPEAL_STATUSES)[number]
+
+// Apelación que envía una persona suspendida; el administrador la acepta (se reactiva la cuenta) o la rechaza con una respuesta
+export interface IAppeal {
+  message: string
+  sentAt: Date
+  status: AppealStatus
+  response?: string
+  respondedAt?: Date
+}
+
+export interface ISuspension {
+  reason: string
+  suspendedAt: Date
+  suspendedBy: Types.ObjectId
+  report?: Types.ObjectId
+  appeal?: IAppeal
+}
+
 export interface IUser {
   googleId: string
   email: string
@@ -45,6 +65,9 @@ export interface IUser {
   address?: IAddress
   categories: Types.ObjectId[]
   tutorProfile?: ITutorProfile
+  // Cuenta bloqueada por el administrador: puede iniciar sesión, pero solo ve la pantalla de suspensión y la apelación
+  suspended: boolean
+  suspension?: ISuspension
   createdAt: Date
   updatedAt: Date
 }
@@ -73,6 +96,28 @@ const tutorProfileSchema = new Schema<ITutorProfile>(
   { _id: false },
 )
 
+const appealSchema = new Schema<IAppeal>(
+  {
+    message: { type: String, required: true, trim: true, maxlength: 1000 },
+    sentAt: { type: Date, required: true },
+    status: { type: String, enum: APPEAL_STATUSES, default: 'pending' },
+    response: { type: String, trim: true, maxlength: 500 },
+    respondedAt: { type: Date },
+  },
+  { _id: false },
+)
+
+const suspensionSchema = new Schema<ISuspension>(
+  {
+    reason: { type: String, required: true, trim: true, maxlength: 500 },
+    suspendedAt: { type: Date, required: true },
+    suspendedBy: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+    report: { type: Schema.Types.ObjectId, ref: 'Report' },
+    appeal: { type: appealSchema },
+  },
+  { _id: false },
+)
+
 const userSchema = new Schema<IUser>(
   {
     googleId: { type: String, required: true, unique: true },
@@ -87,6 +132,8 @@ const userSchema = new Schema<IUser>(
     address: { type: addressSchema },
     categories: { type: [{ type: Schema.Types.ObjectId, ref: 'Category' }], default: [] },
     tutorProfile: { type: tutorProfileSchema },
+    suspended: { type: Boolean, default: false },
+    suspension: { type: suspensionSchema },
   },
   { timestamps: true },
 )

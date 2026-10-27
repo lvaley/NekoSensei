@@ -28,3 +28,9 @@ export async function notify(...items: NotifyInput[]): Promise<void> {
     console.error('No se pudo guardar la notificación', error)
   }
 }
+
+// Avisa a todos los administradores (denuncias, apelaciones, perfiles de tutor por revisar, mensajes de contacto)
+export async function notifyAdmins(input: Omit<NotifyInput, 'user'>): Promise<void> {
+  const admins = await User.find({ role: 'admin' }).select('_id')
+  await notify(...admins.map((admin) => ({ user: admin._id, ...input })))
+}

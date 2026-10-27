@@ -44,7 +44,7 @@ export async function openConversation(req: Request, res: Response): Promise<voi
   const asStudent = req.auth?.role === 'student'
 
   let allowed = false
-  if (target && asStudent) allowed = target.role === 'tutor' && target.tutorProfile?.status === 'approved'
+  if (target && asStudent) allowed = target.role === 'tutor' && target.tutorProfile?.status === 'approved' && !target.suspended
   else if (target && req.auth?.role === 'tutor') allowed = target.role === 'student' && !!(await Enrollment.exists({ tutor: me, student: target._id }))
   if (!target || !allowed) {
     res.status(404).json({ message: 'No puedes escribirle a esta persona.' })

@@ -11,6 +11,7 @@ export async function listUsers(_req: Request, res: Response): Promise<void> {
       email: user.email,
       picture: user.picture,
       role: user.role,
+      suspended: !!user.suspended,
       createdAt: user.createdAt,
     })),
   })

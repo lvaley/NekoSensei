@@ -10,7 +10,7 @@ import { cancelSession, completeSession, createSession, listSessions } from '../
 import { createOffer, deleteOffer, listMyOffers, updateOffer } from '../controllers/offers.controller'
 import { getTutor, listOffers, listTutors } from '../controllers/public.controller'
 import { getPublicStats } from '../controllers/stats.controller'
-import { createContactMessage } from '../controllers/contact.controller'
+import { createContactMessage, listContactMessages } from '../controllers/contact.controller'
 import { getHealth } from '../controllers/health.controller'
 import { updateProfile } from '../controllers/profile.controller'
 import { downloadTutorCv, listTutorApplications, reviewTutor } from '../controllers/tutors.controller'
@@ -18,12 +18,17 @@ import { listNotifications, markAllNotificationsRead, markNotificationRead } fro
 import { getConversation, listConversations, listMessages, openConversation, postMessage, readConversation, unreadCount } from '../controllers/chat.controller'
 import { createReview, listTutorReviews } from '../controllers/reviews.controller'
 import { listUsers } from '../controllers/users.controller'
-import { requireAuth, requireRole } from '../middlewares/auth'
+import { createReport, listReports, updateReport } from '../controllers/reports.controller'
+import { decideAppeal, listSuspensions, reactivateUser, sendAppeal, suspendUser } from '../controllers/moderation.controller'
+import { getAdminOverview } from '../controllers/overview.controller'
+import { requireAuth, requireAuthAllowSuspended, requireRole } from '../middlewares/auth'
 
 export const apiRouter = Router()
 
 apiRouter.get('/health', getHealth)
 apiRouter.post('/contact', createContactMessage)
+apiRouter.get('/admin/overview', requireAuth, requireRole('admin'), getAdminOverview)
+apiRouter.get('/admin/contact-messages', requireAuth, requireRole('admin'), listContactMessages)
 
 // Catálogo público: categorías activas, tutores aprobados y cursos (ofertas) con filtros
 apiRouter.get('/public/categories', listCategories)
@@ -35,7 +40,19 @@ apiRouter.get('/offers', listOffers)
 
 // Autenticación
 apiRouter.post('/auth/google', googleLogin)
-apiRouter.get('/auth/me', requireAuth, getMe)
+apiRouter.get('/auth/me', requireAuthAllowSuspended, getMe)
+
+// Cuenta suspendida: la única acción permitida es apelar
+apiRouter.post('/suspension/appeal', requireAuthAllowSuspended, sendAppeal)
+
+// Denuncias entre estudiantes y tutores, y moderación (administrador)
+apiRouter.post('/reports', requireAuth, requireRole('student', 'tutor'), createReport)
+apiRouter.get('/admin/reports', requireAuth, requireRole('admin'), listReports)
+apiRouter.patch('/admin/reports/:id', requireAuth, requireRole('admin'), updateReport)
+apiRouter.get('/admin/suspensions', requireAuth, requireRole('admin'), listSuspensions)
+apiRouter.post('/admin/users/:id/suspend', requireAuth, requireRole('admin'), suspendUser)
+apiRouter.post('/admin/users/:id/reactivate', requireAuth, requireRole('admin'), reactivateUser)
+apiRouter.patch('/admin/users/:id/appeal', requireAuth, requireRole('admin'), decideAppeal)
 
 // Rutas protegidas por rol
 apiRouter.get('/users', requireAuth, requireRole('admin'), listUsers)

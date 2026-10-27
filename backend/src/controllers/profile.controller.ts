@@ -4,6 +4,7 @@ import { Category } from '../models/Category'
 import { GENDERS, SELF_ASSIGNABLE_ROLES, User } from '../models/User'
 import type { Gender, UserRole } from '../models/User'
 import { toSelfUser } from '../serializers/user'
+import { notifyAdmins } from '../services/notify.service'
 
 const MAX_PDF_BYTES = 2 * 1024 * 1024
 
@@ -114,8 +115,10 @@ export async function updateProfile(req: Request, res: Response): Promise<void> 
   user.address = { text: addressText, lat, lng }
   user.categories = categoryIds as unknown as typeof user.categories
 
+  let applicationSent = false
   if (role === 'tutor' && tutorUpdate) {
     const previous = user.tutorProfile
+    applicationSent = !previous || previous.status === 'rejected'
     user.tutorProfile = {
       bio: tutorUpdate.bio,
       hourlyRate: tutorUpdate.hourlyRate,
@@ -131,6 +134,8 @@ export async function updateProfile(req: Request, res: Response): Promise<void> 
 
   user.onboardingCompleted = true
   await user.save()
+  // Un perfil de tutor nuevo (o corregido tras un rechazo) queda esperando la revisión del administrador
+  if (applicationSent) await notifyAdmins({ type: 'tutor_application', title: 'Perfil de tutor por revisar', message: `${user.name} envió su perfil de tutor para revisión.`, link: '/admin/tutores' })
 
   res.json({ user: toSelfUser(user) })
 }

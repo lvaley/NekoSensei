@@ -136,7 +136,7 @@ export async function listPayments(req: Request, res: Response): Promise<void> {
 // Estudiante: horarios fijos disponibles y precio de un curso, antes de solicitarlo
 export async function planSlots(req: Request<{ id: string }>, res: Response): Promise<void> {
   const offer = isValidObjectId(req.params.id) ? await Offer.findOne({ _id: req.params.id, active: true }) : null
-  const tutor = offer ? await User.findOne({ _id: offer.tutor, role: 'tutor', 'tutorProfile.status': 'approved' }) : null
+  const tutor = offer ? await User.findOne({ _id: offer.tutor, role: 'tutor', 'tutorProfile.status': 'approved', suspended: { $ne: true } }) : null
   const student = await User.findById(req.auth?.sub)
   if (!offer || !tutor || !student) {
     res.status(404).json({ message: 'Curso no encontrado' })

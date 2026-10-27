@@ -8,7 +8,7 @@ import { buildHomeTravel } from '../services/travel.service'
 // Estudiante: calcula el traslado y la ruta de un curso a domicilio ANTES de solicitarlo
 export async function previewOfferTravel(req: Request<{ id: string }>, res: Response): Promise<void> {
   const offer = isValidObjectId(req.params.id) ? await Offer.findOne({ _id: req.params.id, active: true }) : null
-  const tutor = offer ? await User.findOne({ _id: offer.tutor, role: 'tutor', 'tutorProfile.status': 'approved' }) : null
+  const tutor = offer ? await User.findOne({ _id: offer.tutor, role: 'tutor', 'tutorProfile.status': 'approved', suspended: { $ne: true } }) : null
   if (!offer || !tutor) {
     res.status(404).json({ message: 'Curso no encontrado' })
     return

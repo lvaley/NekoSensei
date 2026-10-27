@@ -1,6 +1,7 @@
 import type { Request, Response } from 'express'
 import { CONTACT_SUBJECTS, ContactMessage } from '../models/ContactMessage'
 import type { ContactSubject } from '../models/ContactMessage'
+import { notifyAdmins } from '../services/notify.service'
 
 interface ContactBody {
   name?: unknown
@@ -11,6 +12,8 @@ interface ContactBody {
 }
 
 type FieldErrors = Partial<Record<'name' | 'email' | 'subject' | 'message', string>>
+
+const SUBJECT_LABELS: Record<ContactSubject, string> = { consulta: 'consulta general', soporte: 'soporte técnico', tutor: 'quiere ser tutor', sugerencia: 'sugerencia', otro: 'otro motivo' }
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
@@ -50,5 +53,12 @@ export async function createContactMessage(req: Request<unknown, unknown, Contac
   }
 
   await ContactMessage.create(data)
+  await notifyAdmins({ type: 'contact_message', title: 'Nuevo mensaje de contacto', message: `${data.name} escribió desde la página de contacto (${SUBJECT_LABELS[data.subject]}).`, link: '/admin/mensajes' })
   res.status(201).json({ message: 'Mensaje enviado' })
+}
+
+// Bandeja de mensajes de contacto (administrador): los más recientes primero
+export async function listContactMessages(_req: Request, res: Response): Promise<void> {
+  const messages = await ContactMessage.find().sort({ createdAt: -1 }).limit(200)
+  res.json({ messages: messages.map((item) => ({ id: String(item._id), name: item.name, email: item.email, subject: item.subject, message: item.message, createdAt: (item as unknown as { createdAt: Date }).createdAt })) })
 }

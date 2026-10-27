@@ -18,6 +18,12 @@ export const NOTIFICATION_TYPES = [
   'reschedule_accepted',
   'reschedule_rejected',
   'review_received',
+  'report_received',
+  'report_closed',
+  'appeal_received',
+  'account_reactivated',
+  'tutor_application',
+  'contact_message',
 ] as const
 export type NotificationType = (typeof NOTIFICATION_TYPES)[number]
 

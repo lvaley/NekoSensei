@@ -67,7 +67,7 @@ function publicLocation(tutor: TutorDoc) {
 }
 
 async function approvedTutors(): Promise<Map<string, TutorDoc>> {
-  const tutors = await User.find({ role: 'tutor', 'tutorProfile.status': 'approved' }).limit(500)
+  const tutors = await User.find({ role: 'tutor', 'tutorProfile.status': 'approved', suspended: { $ne: true } }).limit(500)
   return new Map(tutors.map((tutor) => [String(tutor._id), tutor as unknown as TutorDoc]))
 }
 
@@ -186,7 +186,7 @@ export async function listTutors(req: Request, res: Response): Promise<void> {
 
 // Perfil público de un tutor aprobado, con sus ofertas activas
 export async function getTutor(req: Request<{ id: string }>, res: Response): Promise<void> {
-  const tutor = isValidObjectId(req.params.id) ? await User.findOne({ _id: req.params.id, role: 'tutor', 'tutorProfile.status': 'approved' }) : null
+  const tutor = isValidObjectId(req.params.id) ? await User.findOne({ _id: req.params.id, role: 'tutor', 'tutorProfile.status': 'approved', suspended: { $ne: true } }) : null
   if (!tutor) {
     res.status(404).json({ message: 'Tutor no encontrado' })
     return

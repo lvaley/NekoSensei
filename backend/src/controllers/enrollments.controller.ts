@@ -108,7 +108,7 @@ export async function createEnrollment(req: Request, res: Response): Promise<voi
   }
 
   const offer = isValidObjectId(offerId) ? await Offer.findOne({ _id: offerId, active: true }) : null
-  const tutor = offer ? await User.findOne({ _id: offer.tutor, role: 'tutor', 'tutorProfile.status': 'approved' }) : null
+  const tutor = offer ? await User.findOne({ _id: offer.tutor, role: 'tutor', 'tutorProfile.status': 'approved', suspended: { $ne: true } }) : null
   if (!offer || !tutor) {
     res.status(404).json({ message: 'Este curso ya no está disponible.' })
     return

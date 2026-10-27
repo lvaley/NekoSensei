@@ -1,5 +1,5 @@
 import type { HydratedDocument } from 'mongoose'
-import type { IUser } from '../models/User'
+import type { ISuspension, IUser } from '../models/User'
 
 // Datos del propio usuario (sesión actual). El PDF de la hoja de vida nunca se envía aquí.
 export function toSelfUser(user: HydratedDocument<IUser>) {
@@ -17,6 +17,7 @@ export function toSelfUser(user: HydratedDocument<IUser>) {
     documentId: user.documentId,
     address: user.address ? { text: user.address.text, lat: user.address.lat, lng: user.address.lng } : undefined,
     categories: user.categories.map(String),
+    suspension: user.suspended && user.suspension ? toSuspensionView(user.suspension) : undefined,
     tutor: tutor
       ? {
           bio: tutor.bio,
@@ -28,5 +29,14 @@ export function toSelfUser(user: HydratedDocument<IUser>) {
           reviewNote: tutor.reviewNote,
         }
       : undefined,
+  }
+}
+
+export function toSuspensionView(suspension: ISuspension) {
+  const appeal = suspension.appeal
+  return {
+    reason: suspension.reason,
+    suspendedAt: suspension.suspendedAt,
+    appeal: appeal ? { message: appeal.message, sentAt: appeal.sentAt, status: appeal.status, response: appeal.response, respondedAt: appeal.respondedAt } : undefined,
   }
 }
