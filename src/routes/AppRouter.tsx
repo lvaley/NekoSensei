@@ -4,6 +4,11 @@ import { Route, Routes } from 'react-router-dom'
 import { ProtectedRoute } from '../components/auth/ProtectedRoute'
 import { MainLayout } from '../components/layout/MainLayout'
 import { About } from '../pages/About'
+import { Conduct } from '../pages/Conduct'
+import { Suspended } from '../pages/Suspended'
+import { AdminMessages } from '../pages/AdminMessages'
+import { AdminReports } from '../pages/AdminReports'
+import { useAuth } from '../hooks/useAuth'
 import { AdminCategories } from '../pages/AdminCategories'
 import { AdminTutors } from '../pages/AdminTutors'
 import { AdminUsers } from '../pages/AdminUsers'
@@ -32,6 +37,22 @@ const Onboarding = lazy(() => import('../pages/Onboarding').then((module) => ({ 
 const Profile = lazy(() => import('../pages/Profile').then((module) => ({ default: module.Profile })))
 
 export function AppRouter() {
+  const { user } = useAuth()
+
+  // Cuenta suspendida: toda la navegación se reduce a la pantalla de suspensión y las páginas legales
+  if (user?.suspension) {
+    return (
+      <Routes>
+        <Route element={<MainLayout />}>
+          <Route path="convivencia" element={<Conduct />} />
+          <Route path="terminos" element={<Terms />} />
+          <Route path="privacidad" element={<Privacy />} />
+          <Route path="*" element={<Suspended />} />
+        </Route>
+      </Routes>
+    )
+  }
+
   return (
     <Routes>
       <Route element={<MainLayout />}>
@@ -40,6 +61,7 @@ export function AppRouter() {
         <Route path="ayuda" element={<Faq />} />
         <Route path="privacidad" element={<Privacy />} />
         <Route path="terminos" element={<Terms />} />
+        <Route path="convivencia" element={<Conduct />} />
         <Route path="contacto" element={<Contact />} />
         <Route path="login" element={<Login />} />
         <Route path="registro" element={<Register />} />
@@ -58,6 +80,8 @@ export function AppRouter() {
         <Route element={<ProtectedRoute roles={['admin']} />}>
           <Route path="admin" element={<AdminUsers />} />
           <Route path="admin/tutores" element={<AdminTutors />} />
+          <Route path="admin/denuncias" element={<AdminReports />} />
+          <Route path="admin/mensajes" element={<AdminMessages />} />
           <Route path="admin/categorias" element={<AdminCategories />} />
         </Route>
         <Route element={<ProtectedRoute roles={['tutor']} />}>

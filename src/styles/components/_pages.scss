@@ -1402,6 +1402,7 @@ html {
   > div {
     display: flex;
     flex-direction: column-reverse;
+    justify-content: flex-end;
     padding: 0.75rem 1rem;
     border: 1px solid $line;
     border-radius: $radius-card;
@@ -1489,4 +1490,151 @@ html {
   color: $muted;
   font-size: 0.82rem;
   line-height: 1.45;
+}
+
+// Enlace discreto para denunciar desde la tarjeta de una inscripción
+.enrollment-card__report {
+  align-self: flex-start;
+  margin-top: 0.75rem;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: $muted;
+  font-size: 0.8rem;
+
+  &:hover,
+  &:focus-visible {
+    color: $vermilion-dark;
+    text-decoration: underline;
+  }
+}
+
+// Pantalla de cuenta suspendida
+.suspended {
+  max-width: 44rem;
+  margin: 0 auto;
+  padding: 2rem;
+  border: 1px solid $line;
+  border-radius: $radius-card;
+  background: $white;
+
+  &__head {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+
+    i {
+      color: $vermilion;
+      font-size: 2.4rem;
+    }
+  }
+
+  &__facts {
+    display: grid;
+    gap: 0.75rem;
+    margin: 0 0 1rem;
+    padding: 1rem 1.25rem;
+    border-left: 4px solid $vermilion;
+    border-radius: 0 $radius-card $radius-card 0;
+    background: $vermilion-soft;
+
+    dt {
+      color: $muted;
+      font-size: 0.75rem;
+      font-weight: $weight-medium;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    dd {
+      margin: 0;
+    }
+  }
+
+  &__appeal {
+    margin-top: 1.5rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid $line;
+  }
+
+  &__quote {
+    margin: 0;
+    padding: 0.75rem 1rem;
+    border-left: 3px solid $gold;
+    background: $paper;
+    color: $muted;
+    white-space: pre-wrap;
+  }
+}
+
+// Tarjetas de la bandeja de denuncias (administrador)
+.admin-report {
+  &__detail {
+    margin: 0.75rem 0;
+    padding: 0.6rem 0.9rem;
+    border-left: 3px solid $gold;
+    background: $paper;
+    white-space: pre-wrap;
+  }
+
+  &__people {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+    gap: 0.75rem 1.5rem;
+  }
+
+  &__label {
+    display: block;
+    color: $muted;
+    font-size: 0.72rem;
+    font-weight: $weight-medium;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+}
+
+// ── Panel del administrador ──
+.admin-pending {
+  position: relative;
+  height: 100%;
+  padding: 1.1rem 1.25rem;
+
+  > i {
+    color: $muted;
+    font-size: 1.3rem;
+  }
+
+  &__count {
+    display: block;
+    color: $ink;
+    font-size: 2rem;
+    line-height: 1.2;
+  }
+
+  &--alert {
+    border-color: $vermilion;
+
+    > i,
+    .admin-pending__count {
+      color: $vermilion;
+    }
+  }
+}
+
+.admin-figure {
+  display: flex;
+  flex-direction: column;
+  padding: 0.9rem 1rem;
+
+  strong {
+    color: $ink;
+    font-size: 1.6rem;
+    line-height: 1.2;
+  }
+
+  span {
+    color: $muted;
+    font-size: 0.85rem;
+  }
 }

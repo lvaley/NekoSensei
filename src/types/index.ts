@@ -73,6 +73,22 @@ export interface AuthUser {
   address?: Address
   categories: string[]
   tutor?: TutorProfile
+  // Presente solo si el administrador suspendió la cuenta
+  suspension?: Suspension
+}
+
+export interface Appeal {
+  message: string
+  sentAt: string
+  status: 'pending' | 'rejected'
+  response?: string
+  respondedAt?: string
+}
+
+export interface Suspension {
+  reason: string
+  suspendedAt: string
+  appeal?: Appeal
 }
 
 export interface AuthResponse {
@@ -87,7 +103,29 @@ export interface AdminUser {
   email: string
   picture?: string
   role: UserRole
+  suspended: boolean
   createdAt: string
+}
+
+export type ReportReason = 'acoso' | 'fraude' | 'contenido_inapropiado' | 'incumplimiento' | 'suplantacion' | 'otro'
+export type ReportStatus = 'pending' | 'reviewing' | 'resolved' | 'dismissed'
+
+// Denuncia tal como la ve el administrador
+export interface AdminReport {
+  id: string
+  reason: ReportReason
+  reasonLabel: string
+  detail: string
+  status: ReportStatus
+  adminNote?: string
+  createdAt: string
+  resolvedAt?: string
+  reporter: { id: string; name: string; email: string; role: UserRole; suspended: boolean }
+  reported: { id: string; name: string; email: string; role: UserRole; suspended: boolean; totalReports: number }
+}
+
+export interface AdminSuspension extends Suspension {
+  user: { id: string; name: string; email: string; role: UserRole }
 }
 
 // Catálogo de categorías (dos niveles: categoría y subcategorías)
@@ -458,4 +496,14 @@ export interface ConversationSummary {
   lastText: string
   lastMessageAt: string | null
   unread: number
+}
+
+// Mensaje enviado desde el formulario de contacto, tal como lo ve el administrador
+export interface AdminContactMessage {
+  id: string
+  name: string
+  email: string
+  subject: string
+  message: string
+  createdAt: string
 }

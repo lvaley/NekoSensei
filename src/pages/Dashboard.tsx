@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Alert, Col, Container, Row } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
+import { AdminOverview } from './AdminOverview'
 import { PageHero } from '../components/ui/PageHero'
 import { useAuth } from '../hooks/useAuth'
 import { useDocumentTitle } from '../hooks/useDocumentTitle'
@@ -35,10 +36,7 @@ const ROLE_SHORTCUTS: Record<UserRole, { icon: string; title: string; text: stri
     { icon: 'bi-people', title: 'Mis estudiantes', text: 'Responde solicitudes y revisa a tus alumnos.', to: '/mis-estudiantes' },
     { icon: 'bi-calendar-check', title: 'Agenda', text: 'Tu calendario de clases.', to: '/agenda' },
   ],
-  admin: [
-    { icon: 'bi-people', title: 'Usuarios', text: 'Consulta las cuentas registradas.', to: '/admin' },
-    { icon: 'bi-flag', title: 'Moderación', text: 'Denuncias y suspensiones.' },
-  ],
+  admin: [],
 }
 
 const TUTOR_ALERT = {
@@ -88,6 +86,7 @@ export function Dashboard() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isTutor, tutorStatus, setUser])
   if (!user) return null
+  if (user.role === 'admin') return <AdminOverview />
 
   return (
     <>
@@ -128,13 +127,6 @@ export function Dashboard() {
             </Col>
           ))}
         </Row>
-        {user.role === 'admin' && (
-          <div className="mt-4">
-            <Link to="/admin/tutores" className="btn btn-primary">
-              Revisar tutores
-            </Link>
-          </div>
-        )}
       </Container>
     </>
   )
