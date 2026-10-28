@@ -21,7 +21,7 @@ export function Courses() {
 
   return (
     <>
-      <PageHero eyebrow="Cursos" title="Encuentra tu próxima clase" subtitle="Cursos publicados por tutores verificados. Filtra por materia, precio, modalidad y cercanía." />
+      <PageHero eyebrow="Cursos" title="Encuentra tu próxima clase" subtitle="Cientos de materias, tutores verificados y clases a tu medida. Filtra por precio, modalidad y cercanía, y reserva hoy mismo." />
       <Container className="page-container">
         <SearchFilters params={params} onChange={setParams} showDistance={hasOrigin} total={data?.offers.length} />
         {!hasOrigin && (

@@ -5,5 +5,5 @@ import { useDocumentTitle } from '../hooks/useDocumentTitle'
 export function Conduct() {
   useDocumentTitle('Normas de convivencia')
 
-  return <LegalDocument eyebrow="Comunidad" title="Normas de convivencia" subtitle="Lo que esperamos de estudiantes y tutores para cuidar la comunidad de Neko Sensei." updated={LEGAL_UPDATED} sections={conductSections} />
+  return <LegalDocument eyebrow="Comunidad" title="Normas de convivencia" subtitle="Una comunidad de aprendizaje segura y respetuosa: las reglas claras que protegen a estudiantes y tutores por igual." updated={LEGAL_UPDATED} sections={conductSections} />
 }

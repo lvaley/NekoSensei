@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { Alert, Button, Col, Container, Form, Modal, Row } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
 import { EnrollmentCard } from '../components/enrollments/EnrollmentCard'
@@ -32,6 +32,8 @@ export function MyStudents() {
   const [rejecting, setRejecting] = useState<Enrollment | null>(null)
   const [reason, setReason] = useState('')
   const [actionError, setActionError] = useState('')
+  const [busy, setBusy] = useState(false)
+  const running = useRef(false)
 
   const pending = items?.filter((item) => item.status === 'pending' || item.status === 'awaiting_payment') ?? []
   const active = items?.filter((item) => item.status === 'active') ?? []
@@ -40,13 +42,20 @@ export function MyStudents() {
   const current: Tab = tab ?? (pending.length > 0 ? 'solicitudes' : 'activos')
   const list = current === 'solicitudes' ? pending : current === 'activos' ? active : history
 
+  // Una sola acción a la vez: un segundo clic mientras la primera se procesa se ignora (si no, llegaría como acción inválida y mostraría un error)
   const run = async (request: () => Promise<unknown>) => {
+    if (running.current) return
+    running.current = true
+    setBusy(true)
     setActionError('')
     try {
       await request()
       await reload()
     } catch (err) {
       setActionError(axios.isAxiosError(err) && err.response?.data?.message ? err.response.data.message : 'No pudimos completar la acción.')
+    } finally {
+      running.current = false
+      setBusy(false)
     }
   }
 
@@ -60,7 +69,7 @@ export function MyStudents() {
 
   return (
     <>
-      <PageHero eyebrow="Tutor" title="Mis estudiantes" subtitle="Responde solicitudes, agenda clases y da seguimiento a quienes estudian contigo." />
+      <PageHero eyebrow="Tutor" title="Mis estudiantes" subtitle="Haz crecer tu comunidad de alumnos: responde solicitudes rápido, agenda clases y acompaña el progreso de cada estudiante." />
       <Container className="page-container">
         <EnrollmentTabs
           active={current}
@@ -100,7 +109,7 @@ export function MyStudents() {
                   )}
                   {enrollment.status === 'pending' && (
                     <>
-                      <Button size="sm" variant="primary" onClick={() => run(() => api.patch(`/enrollments/${enrollment.id}/decision`, { decision: 'accept' }))}>
+                      <Button disabled={busy} size="sm" variant="primary" onClick={() => run(() => api.patch(`/enrollments/${enrollment.id}/decision`, { decision: 'accept' }))}>
                         Aceptar
                       </Button>
                       <Button size="sm" variant="outline-danger" onClick={() => { setReason(''); setRejecting(enrollment) }}>
@@ -111,7 +120,7 @@ export function MyStudents() {
                   {enrollment.status === 'awaiting_payment' && (
                     <>
                       <span className="small text-secondary align-self-center">Esperando pago</span>
-                      <Button size="sm" variant="outline-danger" onClick={() => window.confirm('¿Cancelar esta solicitud aceptada? El estudiante ya no podrá pagarla.') && run(() => api.patch(`/enrollments/${enrollment.id}/cancel`))}>
+                      <Button disabled={busy} size="sm" variant="outline-danger" onClick={() => window.confirm('¿Cancelar esta solicitud aceptada? El estudiante ya no podrá pagarla.') && run(() => api.patch(`/enrollments/${enrollment.id}/cancel`))}>
                         Cancelar
                       </Button>
                     </>
@@ -123,10 +132,10 @@ export function MyStudents() {
                           Agendar clase
                         </Button>
                       )}
-                      <Button size="sm" variant="outline-dark" onClick={() => window.confirm('¿Marcar este curso como finalizado? Se cancelarán las clases futuras.') && run(() => api.patch(`/enrollments/${enrollment.id}/finish`))}>
+                      <Button disabled={busy} size="sm" variant="outline-dark" onClick={() => window.confirm('¿Marcar este curso como finalizado? Se cancelarán las clases futuras.') && run(() => api.patch(`/enrollments/${enrollment.id}/finish`))}>
                         Finalizar
                       </Button>
-                      <Button size="sm" variant="outline-danger" onClick={() => window.confirm('¿Cancelar esta inscripción?') && run(() => api.patch(`/enrollments/${enrollment.id}/cancel`))}>
+                      <Button disabled={busy} size="sm" variant="outline-danger" onClick={() => window.confirm('¿Cancelar esta inscripción?') && run(() => api.patch(`/enrollments/${enrollment.id}/cancel`))}>
                         Cancelar
                       </Button>
                     </>
@@ -157,7 +166,7 @@ export function MyStudents() {
           <Button variant="outline-secondary" onClick={() => setRejecting(null)}>
             Cancelar
           </Button>
-          <Button variant="danger" onClick={confirmReject}>
+          <Button disabled={busy} variant="danger" onClick={confirmReject}>
             Rechazar
           </Button>
         </Modal.Footer>

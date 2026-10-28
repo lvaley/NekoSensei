@@ -42,7 +42,7 @@ export type ContactErrors = Partial<Record<'name' | 'email' | 'subject' | 'messa
 // Autenticación y perfil
 export type Gender = 'masculino' | 'femenino' | 'otro' | 'prefiero_no_decir'
 
-export type TutorStatus = 'pending' | 'approved' | 'rejected'
+export type TutorStatus = 'pending' | 'approved' | 'rejected' | 'inactive'
 
 export interface Address {
   text: string
@@ -58,6 +58,7 @@ export interface TutorProfile {
   hasCvFile: boolean
   status: TutorStatus
   reviewNote?: string
+  reactivationRequested?: boolean
 }
 
 export interface AuthUser {
@@ -136,6 +137,8 @@ export interface CategoryChild {
 }
 
 export interface Category extends CategoryChild {
+  // Icono (Bootstrap Icons) de la categoría principal; sin icono asignado se usa el genérico
+  icon?: string
   children: CategoryChild[]
 }
 
@@ -154,6 +157,7 @@ export interface TutorApplication {
   cvFileName?: string
   status: TutorStatus
   reviewNote?: string
+  reactivationRequest?: { message: string; sentAt: string } | null
   categories: string[]
   updatedAt: string
 }
@@ -328,6 +332,8 @@ export interface PaymentRecord {
   amount: number
   sessions: number
   status: 'paid' | 'failed'
+  refunded: number
+  refundedAt: string | null
   failureReason: string | null
   card: { brand: string; last4: string } | null
   other: string
@@ -506,4 +512,42 @@ export interface AdminContactMessage {
   subject: string
   message: string
   createdAt: string
+}
+
+// ── Reportería (v0.8) ──
+export interface ReportMonth {
+  month: string
+  gross: number
+  refunds: number
+  net: number
+  commission: number
+  payout: number
+  completed: number
+  cancelled: number
+}
+
+export interface AdminAnalytics {
+  month: string
+  commissionRate: number
+  summary: ReportMonth & { requests: number }
+  series: (ReportMonth & { requests: number })[]
+  demand: { byCategory: { name: string; count: number }[]; topCourses: { name: string; count: number }[] }
+  rankings: { best: TutorRank[]; worst: TutorRank[] }
+}
+
+export interface TutorRank {
+  id: string
+  name: string
+  average: number
+  reviews: number
+  publicProfile: boolean
+}
+
+export interface TutorEarnings {
+  month: string
+  commissionRate: number
+  summary: ReportMonth
+  series: ReportMonth[]
+  byCourse: { title: string; payments: number; gross: number; refunds: number; net: number; commission: number; payout: number }[]
+  total: { gross: number; refunds: number; net: number; commission: number; payout: number; students: number }
 }

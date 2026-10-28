@@ -13,7 +13,7 @@ export function Faq() {
       <PageHero
         eyebrow="Ayuda"
         title="Preguntas frecuentes"
-        subtitle="Respuestas rápidas sobre cómo funciona Neko Sensei. Estamos construyendo la plataforma por etapas, así que algunas funciones se activarán en próximas versiones."
+        subtitle="Todo lo que necesitas saber para aprender o enseñar con Neko Sensei: reservas, pagos, clases y seguridad, explicado de forma clara."
       />
 
       <Container className="page-container">

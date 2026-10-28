@@ -73,7 +73,7 @@ export function MyCourses() {
 
   return (
     <>
-      <PageHero eyebrow="Estudiante" title="Mis cursos" subtitle="Tus cursos activos, tus solicitudes y los tutores con los que estudias." />
+      <PageHero eyebrow="Estudiante" title="Mis cursos" subtitle="Tu camino de aprendizaje en un solo lugar: sigue tu progreso, paga y renueva tus planes y retoma tus clases cuando quieras." />
       <Container className="page-container">
         <EnrollmentTabs
           active={tab}

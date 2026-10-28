@@ -1,12 +1,14 @@
 import { useCallback, useEffect, useState } from 'react'
 import type { FormEvent } from 'react'
 import { Alert, Container } from 'react-bootstrap'
+import { CategoryIconPicker } from '../components/ui/CategoryIconPicker'
 import { AdminNav } from '../components/ui/AdminNav'
 import { PageHero } from '../components/ui/PageHero'
 import { useDocumentTitle } from '../hooks/useDocumentTitle'
 import { api } from '../services/api'
 import type { Category } from '../types'
 import { ListSkeleton } from '../components/ui/Skeleton'
+import { DEFAULT_CATEGORY_ICON, categoryIcon } from '../utils/categoryIcons'
 
 type State = { kind: 'loading' } | { kind: 'ok'; categories: Category[] } | { kind: 'error' }
 
@@ -16,6 +18,9 @@ export function AdminCategories() {
   const [state, setState] = useState<State>({ kind: 'loading' })
   const [error, setError] = useState('')
   const [newName, setNewName] = useState('')
+  const [newIcon, setNewIcon] = useState(DEFAULT_CATEGORY_ICON)
+  // Categoría cuyo icono se está cambiando
+  const [iconFor, setIconFor] = useState<string | null>(null)
   // Formulario abierto para agregar una subcategoría a esta categoría
   const [addingTo, setAddingTo] = useState<string | null>(null)
   const [childName, setChildName] = useState('')
@@ -58,8 +63,9 @@ export function AdminCategories() {
   const addCategory = (event: FormEvent) => {
     event.preventDefault()
     void run(async () => {
-      await api.post('/categories', { name: newName })
+      await api.post('/categories', { name: newName, icon: newIcon })
       setNewName('')
+      setNewIcon(DEFAULT_CATEGORY_ICON)
     })
   }
 
@@ -88,7 +94,7 @@ export function AdminCategories() {
     if (window.confirm(`¿Eliminar "${name}"?${extra}`)) void run(() => api.delete(`/categories/${id}`))
   }
 
-  const row = (item: { id: string; name: string; active: boolean }, hasChildren: boolean, isParent: boolean) =>
+  const row = (item: { id: string; name: string; active: boolean; icon?: string }, hasChildren: boolean, isParent: boolean) =>
     editing?.id === item.id ? (
       <form onSubmit={saveName} className="category-row">
         <input
@@ -109,6 +115,7 @@ export function AdminCategories() {
     ) : (
       <div className="category-row">
         <span className={`category-row__name${item.active ? '' : ' is-inactive'}`}>
+          {isParent && <i className={`bi ${categoryIcon(item.icon)} category-row__icon`} aria-hidden="true" />}
           {item.name}
           {!item.active && <small className="ms-2">(oculta)</small>}
         </span>
@@ -116,6 +123,11 @@ export function AdminCategories() {
           {isParent && (
             <button type="button" className="btn btn-link btn-sm" onClick={() => { setAddingTo(item.id); setChildName('') }}>
               + Subcategoría
+            </button>
+          )}
+          {isParent && (
+            <button type="button" className="btn btn-link btn-sm" onClick={() => setIconFor(iconFor === item.id ? null : item.id)}>
+              Icono
             </button>
           )}
           <button type="button" className="btn btn-link btn-sm" onClick={() => setEditing({ id: item.id, name: item.name })}>
@@ -133,7 +145,7 @@ export function AdminCategories() {
 
   return (
     <>
-      <PageHero eyebrow="Administración" title="Catálogo de categorías" subtitle="Los tutores publicarán sus ofertas dentro de estas categorías." />
+      <PageHero eyebrow="Administración" title="Catálogo de categorías" subtitle="Organiza el catálogo para que cada estudiante encuentre su materia al instante y cada tutor destaque en la suya." />
       <AdminNav />
       <Container className="page-container">
         {error && <Alert variant="danger">{error}</Alert>}
@@ -154,12 +166,27 @@ export function AdminCategories() {
               <button type="submit" className="btn btn-primary" disabled={newName.trim().length < 2}>
                 Agregar categoría
               </button>
+              <div className="category-add__icons">
+                <p>Icono (opcional): si no eliges uno, se usa el genérico.</p>
+                <CategoryIconPicker value={newIcon} onChange={setNewIcon} />
+              </div>
             </form>
 
             <div className="d-grid gap-3">
               {state.categories.map((category) => (
                 <div key={category.id} className="surface-card p-0 category-card">
                   <div className="category-card__head">{row(category, category.children.length > 0, true)}</div>
+                  {iconFor === category.id && (
+                    <div className="category-icon-edit">
+                      <CategoryIconPicker
+                        value={categoryIcon(category.icon)}
+                        onChange={(icon) => {
+                          setIconFor(null)
+                          void run(() => api.put(`/categories/${category.id}`, { icon }))
+                        }}
+                      />
+                    </div>
+                  )}
                   <ul className="list-unstyled mb-0">
                     {category.children.map((child) => (
                       <li key={child.id}>{row(child, false, false)}</li>

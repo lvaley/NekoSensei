@@ -9,7 +9,7 @@ export function Privacy() {
     <LegalDocument
       eyebrow="Legal"
       title="Política de privacidad"
-      subtitle="Qué datos recopilamos, para qué los usamos y cómo puedes controlarlos."
+      subtitle="Tu información, protegida y bajo tu control: qué datos recopilamos, para qué los usamos y cómo gestionarlos."
       updated={LEGAL_UPDATED}
       sections={privacySections}
     />

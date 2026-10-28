@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Alert, Col, Container, Row } from 'react-bootstrap'
-import { Link, useParams } from 'react-router-dom'
+import { Link, useLocation, useParams } from 'react-router-dom'
 import { Avatar } from '../components/ui/Avatar'
 import { EnrollButton } from '../components/enrollments/EnrollButton'
 import { MessageButton } from '../components/ui/MessageButton'
@@ -19,11 +19,19 @@ import { ProfileSkeleton } from '../components/ui/Skeleton'
 export function TutorDetail() {
   const { id } = useParams()
   const { user } = useAuth()
+  const { hash } = useLocation()
   const mine = useEnrollments(user?.role === 'student')
   const openByOffer = new Map((mine.items ?? []).filter((item) => item.status === 'pending' || item.status === 'awaiting_payment' || item.status === 'active').map((item) => [item.offer.id, item]))
   const [data, setData] = useState<TutorDetailData | null>(null)
   const [status, setStatus] = useState<'loading' | 'ready' | 'missing' | 'error'>('loading')
   useDocumentTitle(data?.tutor.name ?? 'Tutor')
+
+  // Los enlaces directos a las reseñas (#resenas) bajan hasta la sección cuando ya cargó el perfil
+  useEffect(() => {
+    if (status !== 'ready' || hash !== '#resenas') return
+    const timer = window.setTimeout(() => document.getElementById('resenas')?.scrollIntoView({ behavior: 'smooth' }), 150)
+    return () => window.clearTimeout(timer)
+  }, [status, hash])
 
   const lat = user?.address?.lat
   const lng = user?.address?.lng
@@ -118,7 +126,7 @@ export function TutorDetail() {
         </Row>
       )}
 
-      <h2 className="h4 mt-5 mb-3">Reseñas</h2>
+      <h2 className="h4 mt-5 mb-3" id="resenas">Reseñas</h2>
       <TutorReviews tutorId={tutor.id} count={tutor.reviewCount} />
     </Container>
   )

@@ -29,7 +29,7 @@ export function AdminMessages() {
 
   return (
     <>
-      <PageHero eyebrow="Administración" title="Mensajes de contacto" subtitle="Consultas, sugerencias y solicitudes que llegan desde la página de contacto." />
+      <PageHero eyebrow="Administración" title="Mensajes de contacto" subtitle="Cada mensaje es una oportunidad: atiende consultas, sugerencias y solicitudes de tu comunidad con rapidez." />
       <AdminNav />
       <Container className="page-container">
         {state.kind === 'loading' && <ListSkeleton label="Cargando mensajes" />}

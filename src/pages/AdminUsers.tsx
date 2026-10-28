@@ -37,7 +37,7 @@ export function AdminUsers() {
 
   return (
     <>
-      <PageHero eyebrow="Administración" title="Usuarios registrados" subtitle="Cuentas creadas en la plataforma y su rol." />
+      <PageHero eyebrow="Administración" title="Usuarios registrados" subtitle="Toda tu comunidad en un vistazo: cuentas, roles y estado, con control para mantenerla segura." />
       <AdminNav />
       <Container className="page-container">
         {state.kind === 'loading' && <ListSkeleton label="Cargando" />}

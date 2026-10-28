@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Alert, Col, Container, Row } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
+import { TextPromptModal } from '../components/ui/TextPromptModal'
 import { AdminOverview } from './AdminOverview'
 import { PageHero } from '../components/ui/PageHero'
 import { useAuth } from '../hooks/useAuth'
@@ -23,6 +24,12 @@ function greetingFor(date: Date): string {
   return 'Buenas noches'
 }
 
+const ROLE_SUBTITLE: Record<UserRole, string> = {
+  student: 'Encuentra tutores, reserva clases y sigue tu progreso. Todo lo que necesitas para aprender, en un solo lugar.',
+  tutor: 'Publica tus cursos, atiende a tus alumnos y haz crecer tus ingresos enseñando lo que sabes.',
+  admin: '',
+}
+
 // Accesos de cada rol; se irán activando en las próximas versiones
 const ROLE_SHORTCUTS: Record<UserRole, { icon: string; title: string; text: string; to?: string }[]> = {
   student: [
@@ -34,6 +41,7 @@ const ROLE_SHORTCUTS: Record<UserRole, { icon: string; title: string; text: stri
     { icon: 'bi-person-vcard', title: 'Mi perfil de tutor', text: 'Biografía, portafolio y tarifa.', to: '/perfil' },
     { icon: 'bi-journal-text', title: 'Mis ofertas', text: 'Publica tus cursos, precios y modalidades.', to: '/mis-ofertas' },
     { icon: 'bi-people', title: 'Mis estudiantes', text: 'Responde solicitudes y revisa a tus alumnos.', to: '/mis-estudiantes' },
+    { icon: 'bi-cash-coin', title: 'Mis ganancias', text: 'Lo que cobras, la comisión y tus clases por mes.', to: '/ganancias' },
     { icon: 'bi-calendar-check', title: 'Agenda', text: 'Tu calendario de clases.', to: '/agenda' },
   ],
   admin: [],
@@ -43,12 +51,14 @@ const TUTOR_ALERT = {
   pending: { variant: 'warning', title: 'Perfil en revisión.', text: 'El equipo administrador está validando tus datos; te avisaremos cuando puedas publicar ofertas.' },
   approved: { variant: 'success', title: 'Perfil aprobado.', text: 'Ya puedes publicar tus cursos desde "Mis ofertas".' },
   rejected: { variant: 'danger', title: 'Perfil rechazado.', text: 'Corrige lo indicado y vuelve a guardar tu perfil para una nueva revisión.' },
+  inactive: { variant: 'warning', title: 'Cuenta de tutor inactiva.', text: 'No apareces en el catálogo ni recibes solicitudes nuevas. Tus alumnos actuales pueden terminar sus cursos contigo.' },
 } as const
 
 export function Dashboard() {
   useDocumentTitle('Mi panel')
   const { user, setUser } = useAuth()
   const [greeting] = useState(() => greetingFor(new Date()))
+  const [asking, setAsking] = useState(false)
 
   const isTutor = user?.role === 'tutor'
   const { items: enrollments } = useEnrollments(isTutor && user?.tutor?.status === 'approved')
@@ -66,7 +76,7 @@ export function Dashboard() {
         .get<{ user: AuthUser }>('/auth/me')
         .then((res) => {
           const next = res.data.user.tutor
-          if (active && next && (next.status !== tutorStatus || next.reviewNote !== user?.tutor?.reviewNote)) setUser(res.data.user)
+          if (active && next && (next.status !== tutorStatus || next.reviewNote !== user?.tutor?.reviewNote || next.reactivationRequested !== user?.tutor?.reactivationRequested)) setUser(res.data.user)
         })
         .catch(() => undefined)
     }
@@ -74,7 +84,8 @@ export function Dashboard() {
       if (document.visibilityState === 'visible') refresh()
     }
 
-    const timer = tutorStatus === 'pending' ? window.setInterval(refresh, 10000) : undefined
+    const waiting = tutorStatus === 'pending' || (tutorStatus === 'inactive' && user?.tutor?.reactivationRequested)
+    const timer = waiting ? window.setInterval(refresh, 10000) : undefined
     document.addEventListener('visibilitychange', onVisible)
     window.addEventListener('focus', refresh)
     return () => {
@@ -90,17 +101,29 @@ export function Dashboard() {
 
   return (
     <>
-      <PageHero eyebrow={ROLE_LABEL[user.role]} title={`${greeting}, ${user.name.split(' ')[0]}`} subtitle={user.email} />
+      <PageHero eyebrow={ROLE_LABEL[user.role]} title={`${greeting}, ${user.name.split(' ')[0]}`} subtitle={ROLE_SUBTITLE[user.role]} />
 
       <Container className="page-container">
         {user.role === 'tutor' && user.tutor && (
           <Alert variant={TUTOR_ALERT[user.tutor.status].variant} className="mb-4">
             <strong>{TUTOR_ALERT[user.tutor.status].title}</strong> {TUTOR_ALERT[user.tutor.status].text}
-            {user.tutor.status === 'rejected' && user.tutor.reviewNote && <div className="mt-1">Motivo: {user.tutor.reviewNote}</div>}
-            {user.tutor.status !== 'approved' && (
+            {(user.tutor.status === 'rejected' || user.tutor.status === 'inactive') && user.tutor.reviewNote && <div className="mt-1">{user.tutor.status === 'inactive' ? 'Mensaje del administrador' : 'Motivo'}: {user.tutor.reviewNote}</div>}
+            {user.tutor.status === 'inactive' ? (
               <div className="mt-2">
-                <Link to="/perfil">Revisar mi perfil</Link>
+                {user.tutor.reactivationRequested ? (
+                  <span>Tu solicitud de reactivación está en revisión; te avisaremos con la respuesta.</span>
+                ) : (
+                  <button type="button" className="btn btn-dark btn-sm" onClick={() => setAsking(true)}>
+                    Solicitar reactivación
+                  </button>
+                )}
               </div>
+            ) : (
+              user.tutor.status !== 'approved' && (
+                <div className="mt-2">
+                  <Link to="/perfil">Revisar mi perfil</Link>
+                </div>
+              )
             )}
           </Alert>
         )}
@@ -128,6 +151,24 @@ export function Dashboard() {
           ))}
         </Row>
       </Container>
+      {asking && (
+        <TextPromptModal
+          title="Solicitar reactivación"
+          intro="Cuéntale al equipo administrador por qué debería reactivar tu cuenta de tutor."
+          label="Tu mensaje"
+          placeholder="Explica qué cambió o qué quieres aclarar"
+          minLength={10}
+          maxLength={500}
+          confirmLabel="Enviar solicitud"
+          onSubmit={async (message) => {
+            await api.post('/tutor/reactivation', { message })
+            const res = await api.get<{ user: AuthUser }>('/auth/me')
+            setUser(res.data.user)
+            setAsking(false)
+          }}
+          onClose={() => setAsking(false)}
+        />
+      )}
     </>
   )
 }

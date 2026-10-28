@@ -130,6 +130,8 @@ $form-label-font-weight: $weight-semibold;
 
 // ── Tarjetas de características ──
 .feature-card {
+  // El enlace extendido (stretched-link) de la tarjeta debe quedar limitado a ella
+  position: relative;
   height: 100%;
 
   &__icon {

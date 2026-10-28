@@ -33,7 +33,7 @@ export function Tutors() {
 
   return (
     <>
-      <PageHero eyebrow="Tutores" title="Aprende con los mejores" subtitle="Perfiles revisados por nuestro equipo. Compara precios, modalidades y encuentra al tutor más cercano a ti." />
+      <PageHero eyebrow="Tutores" title="Aprende con los mejores" subtitle="Tutores verificados, reseñas reales y precios claros. Compara, elige al ideal para ti y empieza a aprender esta semana." />
       <Container className="page-container">
         <SearchFilters params={params} onChange={changeFilters} showDistance={hasOrigin} total={data?.tutors.length} />
         <div className="d-flex justify-content-between align-items-center mt-3 flex-wrap gap-2">

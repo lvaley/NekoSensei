@@ -225,7 +225,7 @@ export function Home() {
                   {categories.map((category) => (
                     <li key={category.id}>
                       <Link to={`/cursos?category=${category.id}`}>
-                        <i className={`bi ${categoryIcon(category.name)}`} aria-hidden="true" />
+                        <i className={`bi ${categoryIcon(category.icon)}`} aria-hidden="true" />
                         <span className="home-index__body">
                           <strong>{category.name}</strong>
                           <small>{category.children.map((child) => child.name).join(', ')}</small>

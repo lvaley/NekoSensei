@@ -3,7 +3,6 @@ import { Col, Container, Row } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
 import { PageHero } from '../components/ui/PageHero'
 import { ListSkeleton } from '../components/ui/Skeleton'
-import { useAuth } from '../hooks/useAuth'
 import { api } from '../services/api'
 
 interface Overview {
@@ -22,7 +21,6 @@ interface Overview {
 
 // Panel del administrador: lo pendiente arriba (con acceso directo) y las cifras generales debajo
 export function AdminOverview() {
-  const { user } = useAuth()
   const [data, setData] = useState<Overview | null>(null)
   const [failed, setFailed] = useState(false)
 
@@ -55,7 +53,7 @@ export function AdminOverview() {
 
   return (
     <>
-      <PageHero eyebrow="Administrador" title={`Panel de administración`} subtitle={user?.email} />
+      <PageHero eyebrow="Administrador" title="Panel de administración" subtitle="Tu plataforma de un vistazo: qué requiere atención hoy y cómo crece Neko Sensei." />
       <Container className="page-container">
         {!data && !failed && <ListSkeleton rows={3} label="Cargando resumen" />}
         {failed && <p className="text-danger">No pudimos cargar el resumen. Intenta de nuevo.</p>}
@@ -84,7 +82,9 @@ export function AdminOverview() {
                 { icon: 'bi-people', title: 'Usuarios', text: 'Cuentas, suspensión y reactivación.', to: '/admin' },
                 { icon: 'bi-person-check', title: 'Tutores', text: 'Revisión de perfiles de tutor.', to: '/admin/tutores' },
                 { icon: 'bi-flag', title: 'Denuncias', text: 'Bandeja de denuncias y apelaciones.', to: '/admin/denuncias' },
+                { icon: 'bi-graph-up', title: 'Reportería', text: 'Ingresos, comisión, clases, demanda y rankings.', to: '/admin/reporteria' },
                 { icon: 'bi-envelope', title: 'Mensajes', text: 'Mensajes del formulario de contacto.', to: '/admin/mensajes' },
+                { icon: 'bi-activity', title: 'Estado del sistema', text: 'Disponibilidad del servidor y la base de datos.', to: '/status' },
                 { icon: 'bi-tags', title: 'Categorías', text: 'Catálogo de materias.', to: '/admin/categorias' },
               ].map((item) => (
                 <Col sm={6} lg={4} key={item.title}>

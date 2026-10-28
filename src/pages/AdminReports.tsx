@@ -58,7 +58,7 @@ export function AdminReports() {
 
   return (
     <>
-      <PageHero eyebrow="Administración" title="Denuncias y apelaciones" subtitle="Revisa las denuncias entre estudiantes y tutores, suspende cuentas y responde las apelaciones." />
+      <PageHero eyebrow="Administración" title="Denuncias y apelaciones" subtitle="Protege la confianza de la comunidad: revisa denuncias, suspende cuentas y resuelve apelaciones con criterio." />
       <AdminNav />
       <Container className="page-container">
         <Nav variant="pills" className="enrollment-tabs mb-3">

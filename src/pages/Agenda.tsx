@@ -89,7 +89,7 @@ export function Agenda() {
 
   return (
     <>
-      <PageHero eyebrow="Agenda" title="Mis clases" subtitle={viewerRole === 'tutor' ? 'Consulta tu calendario, agenda clases virtuales y en tu casa, y responde las solicitudes de reagendar.' : 'Consulta tus clases. Las clases a domicilio las agendas tú y puedes pedir reagendarlas; en las demás, tu tutor las programa.'} />
+      <PageHero eyebrow="Agenda" title="Mis clases" subtitle={viewerRole === 'tutor' ? 'Organiza tu semana con un vistazo: agenda clases virtuales y a domicilio, y responde reagendamientos sin perder tiempo.' : 'Todas tus clases en un solo calendario. Agenda las de domicilio a tu gusto, pide reagendar si surge algo y no te pierdas ninguna.'} />
       <Container className="page-container">
         {error && <Alert variant="danger" dismissible onClose={() => setError('')}>{error}</Alert>}
         <Row className="g-4">

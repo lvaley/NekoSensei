@@ -92,7 +92,7 @@ export function Contact() {
       <PageHero
         eyebrow="Contacto"
         title="Hablemos"
-        subtitle="¿Tienes dudas, sugerencias o quieres ser tutor? Cuéntanos y te responderemos lo antes posible."
+        subtitle="¿Quieres aprender, enseñar o resolver una duda? Escríbenos: nuestro equipo te responde rápido y te acompaña en cada paso."
       />
 
       <Container className="page-container">

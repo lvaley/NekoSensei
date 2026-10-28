@@ -189,11 +189,19 @@ export function MyOffers() {
 
   return (
     <>
-      <PageHero eyebrow="Tutor" title="Mis ofertas" subtitle="Publica los cursos que ofreces: precio, modalidades y si viajas a domicilio." />
+      <PageHero eyebrow="Tutor" title="Mis ofertas" subtitle="Convierte tu conocimiento en ingresos: publica tus cursos, fija tu precio y elige cómo enseñar, en línea o a domicilio." />
       <Container className="page-container">
         {!approved && (
           <Alert variant="warning">
-            <strong>Tu perfil aún no está aprobado.</strong> Podrás publicar ofertas en cuanto el equipo lo revise. <Link to="/panel">Ver estado</Link>
+            {user?.tutor?.status === 'inactive' ? (
+              <>
+                <strong>Tu cuenta de tutor está inactiva.</strong> No puedes gestionar ofertas hasta que te reactiven. <Link to="/panel">Solicitar reactivación</Link>
+              </>
+            ) : (
+              <>
+                <strong>Tu perfil aún no está aprobado.</strong> Podrás publicar ofertas en cuanto el equipo lo revise. <Link to="/panel">Ver estado</Link>
+              </>
+            )}
           </Alert>
         )}
         {approved && (

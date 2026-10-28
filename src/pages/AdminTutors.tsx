@@ -11,11 +11,12 @@ const FILTERS: { value: TutorStatus; label: string }[] = [
   { value: 'pending', label: 'Pendientes' },
   { value: 'approved', label: 'Aprobados' },
   { value: 'rejected', label: 'Rechazados' },
+  { value: 'inactive', label: 'Inactivos' },
 ]
 
 type State = { kind: 'loading' } | { kind: 'ok'; tutors: TutorApplication[] } | { kind: 'error' }
 
-// Bandeja de revisión: el administrador aprueba o rechaza los perfiles de tutor
+// Bandeja de revisión: el administrador aprueba o rechaza perfiles nuevos, inactiva a tutores aprobados y atiende solicitudes de reactivación
 export function AdminTutors() {
   useDocumentTitle('Revisión de tutores')
   const [status, setStatus] = useState<TutorStatus>('pending')
@@ -52,7 +53,7 @@ export function AdminTutors() {
     setStatus(next)
   }
 
-  const review = async (id: string, decision: 'approved' | 'rejected') => {
+  const review = async (id: string, decision: 'approved' | 'rejected' | 'inactive') => {
     setActionError('')
     try {
       await api.patch(`/admin/tutors/${id}/review`, { status: decision, note })
@@ -60,7 +61,7 @@ export function AdminTutors() {
       setNote('')
       await load(status)
     } catch {
-      setActionError(decision === 'rejected' ? 'Indica el motivo del rechazo (mínimo 5 caracteres).' : 'No se pudo guardar la decisión.')
+      setActionError(decision !== 'approved' ? 'Escribe el motivo (mínimo 5 caracteres).' : 'No se pudo guardar la decisión.')
     }
   }
 
@@ -81,7 +82,7 @@ export function AdminTutors() {
 
   return (
     <>
-      <PageHero eyebrow="Administración" title="Revisión de tutores" subtitle="Valida los datos y la hoja de vida antes de aprobar un perfil." />
+      <PageHero eyebrow="Administración" title="Revisión de tutores" subtitle="Asegura la calidad del catálogo: valida datos y hoja de vida, y aprueba solo a los mejores tutores." />
       <AdminNav />
       <Container className="page-container">
         <Nav variant="pills" className="filter-pills mb-4" activeKey={status}>
@@ -147,30 +148,38 @@ export function AdminTutors() {
                 </div>
 
                 {tutor.status === 'rejected' && tutor.reviewNote && <p className="text-secondary mb-3">Motivo del rechazo: {tutor.reviewNote}</p>}
+                {tutor.status === 'inactive' && tutor.reviewNote && <p className="text-secondary mb-3">Motivo de la inactivación: {tutor.reviewNote}</p>}
+                {tutor.reactivationRequest && (
+                  <Alert variant="info" className="mb-3">
+                    <strong>Solicita reactivación</strong> · {new Date(tutor.reactivationRequest.sentAt).toLocaleDateString('es-GT', { day: 'numeric', month: 'short', year: 'numeric' })}
+                    <div className="mt-1">{tutor.reactivationRequest.message}</div>
+                  </Alert>
+                )}
 
                 {rejecting === tutor.id ? (
                   <div>
                     <label htmlFor={`note-${tutor.id}`} className="form-label">
-                      Motivo del rechazo
+                      {tutor.status === 'pending' ? 'Motivo del rechazo' : tutor.status === 'inactive' ? 'Respuesta para el tutor' : 'Motivo de la inactivación (el tutor lo verá)'}
                     </label>
                     <textarea id={`note-${tutor.id}`} className="form-control mb-2" rows={2} value={note} onChange={(event) => setNote(event.target.value)} maxLength={500} />
                     <div className="d-flex gap-2">
-                      <button type="button" className="btn btn-dark btn-sm" onClick={() => review(tutor.id, 'rejected')}>
-                        Confirmar rechazo
+                      <button type="button" className="btn btn-dark btn-sm" onClick={() => review(tutor.id, tutor.status === 'pending' ? 'rejected' : 'inactive')}>
+                        {tutor.status === 'pending' ? 'Confirmar rechazo' : tutor.status === 'inactive' ? 'Enviar respuesta' : 'Confirmar inactivación'}
                       </button>
                       <button type="button" className="btn btn-link btn-sm" onClick={() => setRejecting(null)}>
                         Cancelar
                       </button>
                     </div>
+                    {tutor.status === 'approved' && <p className="small text-secondary mt-2 mb-0">Saldrá del catálogo y no recibirá solicitudes nuevas. Sus alumnos actuales terminan sus cursos.</p>}
                   </div>
                 ) : (
                   <div className="d-flex gap-2">
                     {tutor.status !== 'approved' && (
                       <button type="button" className="btn btn-primary btn-sm" onClick={() => review(tutor.id, 'approved')}>
-                        Aprobar
+                        {tutor.status === 'inactive' ? 'Reactivar' : 'Aprobar'}
                       </button>
                     )}
-                    {tutor.status !== 'rejected' && (
+                    {(tutor.status === 'pending' || tutor.status === 'approved' || (tutor.status === 'inactive' && tutor.reactivationRequest)) && (
                       <button
                         type="button"
                         className="btn btn-dark btn-sm"
@@ -180,7 +189,7 @@ export function AdminTutors() {
                           setActionError('')
                         }}
                       >
-                        Rechazar
+                        {tutor.status === 'approved' ? 'Inactivar' : tutor.status === 'inactive' ? 'Rechazar solicitud' : 'Rechazar'}
                       </button>
                     )}
                   </div>

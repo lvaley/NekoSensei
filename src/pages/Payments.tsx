@@ -29,11 +29,12 @@ export function Payments() {
 
   const items = asTutor ? state.items?.filter((item) => item.status === 'paid') : state.items
   const paid = items?.filter((item) => item.status === 'paid') ?? []
-  const total = paid.reduce((sum, item) => sum + item.amount, 0)
+  const total = paid.reduce((sum, item) => sum + item.amount - item.refunded, 0)
+  const refunded = paid.reduce((sum, item) => sum + item.refunded, 0)
 
   return (
     <>
-      <PageHero eyebrow={asTutor ? 'Tutor' : 'Estudiante'} title={asTutor ? 'Pagos recibidos' : 'Mis pagos'} subtitle={asTutor ? 'El historial de los pagos que recibes por tus clases.' : 'El historial de tus pagos y renovaciones.'} />
+      <PageHero eyebrow={asTutor ? 'Tutor' : 'Estudiante'} title={asTutor ? 'Pagos recibidos' : 'Mis pagos'} subtitle={asTutor ? 'Cada pago por tus clases, claro y ordenado: sigue tus ingresos con total transparencia.' : 'Tus pagos y renovaciones, siempre a la mano y con total transparencia. Pagas seguro y sin sorpresas.'} />
       <Container className="page-container">
         {state.error && <Alert variant="danger">No pudimos cargar los pagos.</Alert>}
         {!items && !state.error && <ListSkeleton label="Cargando tus pagos" />}
@@ -45,7 +46,7 @@ export function Payments() {
         {items && items.length > 0 && (
           <>
             <p className="mb-3">
-              {asTutor ? 'Total recibido' : 'Total pagado'}: <strong>{money(total)}</strong> en {paid.length} {paid.length === 1 ? 'pago' : 'pagos'}.
+              {asTutor ? 'Total recibido' : 'Total pagado'}: <strong>{money(total)}</strong> en {paid.length} {paid.length === 1 ? 'pago' : 'pagos'}{refunded > 0 && ` (ya descontados ${money(refunded)} reembolsados)`}.
             </p>
             <div className="surface-card p-0 table-responsive">
               <table className="table align-middle mb-0">
@@ -81,6 +82,7 @@ export function Payments() {
                       <td>{item.card ? `${item.card.brand} ···· ${item.card.last4}` : '—'}</td>
                       <td>
                         {item.status === 'paid' ? <span className="enrollment-status is-active">Aprobado</span> : <span className="enrollment-status is-closed" title={item.failureReason ?? ''}>Rechazado</span>}
+                        {item.refunded > 0 && <div className="small text-secondary mt-1">Reembolsado {money(item.refunded)}</div>}
                       </td>
                     </tr>
                   ))}

@@ -9,7 +9,7 @@ export function Terms() {
     <LegalDocument
       eyebrow="Legal"
       title="Términos y condiciones"
-      subtitle="Las reglas que rigen el uso de la plataforma por parte de estudiantes y tutores."
+      subtitle="Condiciones claras y justas para que estudiantes y tutores aprendan y enseñen con total confianza."
       updated={LEGAL_UPDATED}
       sections={termsSections}
     />

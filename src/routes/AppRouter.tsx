@@ -6,6 +6,8 @@ import { MainLayout } from '../components/layout/MainLayout'
 import { About } from '../pages/About'
 import { Conduct } from '../pages/Conduct'
 import { Suspended } from '../pages/Suspended'
+import { AdminAnalytics } from '../pages/AdminAnalytics'
+import { TutorEarnings } from '../pages/TutorEarnings'
 import { AdminMessages } from '../pages/AdminMessages'
 import { AdminReports } from '../pages/AdminReports'
 import { useAuth } from '../hooks/useAuth'
@@ -81,12 +83,15 @@ export function AppRouter() {
           <Route path="admin" element={<AdminUsers />} />
           <Route path="admin/tutores" element={<AdminTutors />} />
           <Route path="admin/denuncias" element={<AdminReports />} />
+          <Route path="admin/reporteria" element={<AdminAnalytics />} />
           <Route path="admin/mensajes" element={<AdminMessages />} />
+          <Route path="status" element={<Status />} />
           <Route path="admin/categorias" element={<AdminCategories />} />
         </Route>
         <Route element={<ProtectedRoute roles={['tutor']} />}>
           <Route path="mis-ofertas" element={<MyOffers />} />
           <Route path="mis-estudiantes" element={<MyStudents />} />
+          <Route path="ganancias" element={<TutorEarnings />} />
         </Route>
         <Route element={<ProtectedRoute roles={['student']} />}>
           <Route path="mis-cursos" element={<MyCourses />} />
@@ -101,7 +106,6 @@ export function AppRouter() {
         <Route path="tutores" element={<Tutors />} />
         <Route path="tutores/:id" element={<TutorDetail />} />
         <Route path="cursos" element={<Courses />} />
-        <Route path="status" element={<Status />} />
         <Route path="*" element={<NotFound />} />
       </Route>
     </Routes>

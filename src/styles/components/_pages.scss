@@ -1638,3 +1638,224 @@ html {
     font-size: 0.85rem;
   }
 }
+
+// ── Reportería: gráficas y tarjetas de cifras ──
+.report-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+}
+
+.report-kpi {
+  height: 100%;
+  padding: 1rem 1.15rem;
+
+  span {
+    display: block;
+    color: $muted;
+    font-size: 0.85rem;
+  }
+
+  strong {
+    display: block;
+    color: $ink;
+    font-size: 1.6rem;
+    line-height: 1.25;
+  }
+
+  small {
+    color: $muted;
+  }
+
+  &--accent strong {
+    color: $vermilion;
+  }
+}
+
+.chart {
+  margin: 0;
+
+  &__legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 0.5rem;
+    color: $muted;
+    font-size: 0.85rem;
+  }
+
+  &__dot {
+    display: inline-block;
+    width: 0.65rem;
+    height: 0.65rem;
+    border-radius: 50%;
+
+    &--ink { background: $ink; }
+    &--vermilion { background: $vermilion; }
+    &--gold { background: $gold; }
+    &--sage { background: #5b8a72; }
+  }
+
+  &__plot {
+    position: relative;
+  }
+
+  svg {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  &__grid { stroke: $line; stroke-width: 1; }
+  &__tick { fill: $muted; font-size: 11px; }
+  &__hit { fill: transparent; }
+  &__group { outline: none; }
+  &__group.is-active .chart__hit,
+  &__group:focus-visible .chart__hit { fill: $vermilion-soft; }
+
+  &__bar {
+    transition: opacity 0.15s;
+
+    &--ink { fill: $ink; }
+    &--vermilion { fill: $vermilion; }
+    &--gold { fill: $gold; }
+    &--sage { fill: #5b8a72; }
+  }
+
+  &__tooltip {
+    position: absolute;
+    top: 0;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    padding: 0.5rem 0.75rem;
+    transform: translateX(-50%);
+    border-radius: 0.6rem;
+    background: $ink;
+    color: #fff;
+    font-size: 0.8rem;
+    white-space: nowrap;
+    pointer-events: none;
+
+    .chart__dot { margin-right: 0.2rem; }
+  }
+}
+
+.hbars {
+  display: grid;
+  gap: 0.85rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  &__head {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    font-size: 0.92rem;
+
+    small {
+      color: $muted;
+      font-weight: normal;
+    }
+  }
+
+  &__track {
+    height: 0.5rem;
+    margin-top: 0.3rem;
+    overflow: hidden;
+    border-radius: 999px;
+    background: $line;
+
+    span {
+      display: block;
+      height: 100%;
+      border-radius: 999px;
+      background: $vermilion;
+    }
+  }
+}
+
+.rank-list {
+  display: grid;
+  gap: 0.6rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  li {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    justify-content: space-between;
+  }
+
+  .rank-list__pos {
+    flex: none;
+    width: 1.6rem;
+    color: $muted;
+    font-weight: $weight-bold;
+  }
+
+  .rank-list__who {
+    flex: 1;
+    min-width: 0;
+  }
+}
+
+// ── Selector de icono de categoría ──
+.icon-picker {
+  // 28 iconos: 14 por fila en escritorio (2 filas exactas) y 7 en pantallas pequeñas (4 filas), ocupando todo el ancho
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 0.5rem;
+
+  @media (min-width: 768px) {
+    grid-template-columns: repeat(14, minmax(0, 1fr));
+  }
+
+  &__item {
+    display: grid;
+    place-items: center;
+    height: 2.9rem;
+    border: 1px solid $line;
+    border-radius: 0.6rem;
+    background: $white;
+    color: $ink;
+    font-size: 1.15rem;
+    transition: border-color 0.15s, background 0.15s;
+
+    &:hover {
+      border-color: $vermilion;
+    }
+
+    &.is-selected {
+      border-color: $vermilion;
+      background: $vermilion-soft;
+      color: $vermilion;
+    }
+  }
+}
+
+.category-add__icons {
+  flex: 1 1 100%;
+
+  p {
+    margin-bottom: 0.4rem;
+    color: $muted;
+    font-size: 0.85rem;
+  }
+}
+
+.category-icon-edit {
+  padding: 0 1.25rem 1rem;
+}
+
+.category-row__icon {
+  margin-right: 0.6rem;
+  color: $vermilion;
+}
