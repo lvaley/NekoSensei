@@ -10,6 +10,7 @@ export const NOTIFICATION_TYPES = [
   'payment_required',
   'payment_received',
   'payment_expired',
+  'payment_refunded',
   'session_scheduled',
   'session_cancelled',
   'reschedule_requested',
@@ -23,6 +24,9 @@ export const NOTIFICATION_TYPES = [
   'appeal_received',
   'account_reactivated',
   'tutor_application',
+  'tutor_inactivated',
+  'tutor_reactivated',
+  'tutor_reactivation_request',
   'contact_message',
 ] as const
 export type NotificationType = (typeof NOTIFICATION_TYPES)[number]

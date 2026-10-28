@@ -21,6 +21,9 @@ export interface IPayment {
   failureReason?: string
   cardBrand: string
   cardLast4: string
+  // Reembolso al estudiante cuando el tutor cancela un bloque ya pagado (parte de las clases no realizadas)
+  refundedAmount?: number
+  refundedAt?: Date
   createdAt: Date
 }
 
@@ -40,6 +43,8 @@ const paymentSchema = new Schema<IPayment>(
     failureReason: { type: String },
     cardBrand: { type: String, default: '' },
     cardLast4: { type: String, default: '' },
+    refundedAmount: { type: Number, default: 0 },
+    refundedAt: { type: Date },
   },
   { timestamps: { createdAt: true, updatedAt: false } },
 )

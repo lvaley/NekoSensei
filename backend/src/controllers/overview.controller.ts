@@ -12,7 +12,8 @@ export async function getAdminOverview(_req: Request, res: Response): Promise<vo
   const [students, tutors, pendingTutors, suspended, pendingAppeals, openReports, messagesWeek, messagesTotal, activeEnrollments, activeOffers, categories] = await Promise.all([
     User.countDocuments({ role: 'student' }),
     User.countDocuments({ role: 'tutor', 'tutorProfile.status': 'approved' }),
-    User.countDocuments({ role: 'tutor', 'tutorProfile.status': 'pending' }),
+    // Por revisar: perfiles nuevos más solicitudes de reactivación de tutores inactivos
+    User.countDocuments({ $or: [{ role: 'tutor', 'tutorProfile.status': 'pending' }, { role: 'tutor', 'tutorProfile.status': 'inactive', 'tutorProfile.reactivationRequest.sentAt': { $exists: true } }] }),
     User.countDocuments({ suspended: true }),
     User.countDocuments({ suspended: true, 'suspension.appeal.status': 'pending' }),
     Report.countDocuments({ status: { $in: ['pending', 'reviewing'] } }),

@@ -1,6 +1,6 @@
 import type { Request, Response } from 'express'
 import { isValidObjectId } from 'mongoose'
-import { Category } from '../models/Category'
+import { Category, DEFAULT_CATEGORY_ICON, isCategoryIcon } from '../models/Category'
 import { User } from '../models/User'
 
 function cleanName(value: unknown): string {
@@ -20,6 +20,7 @@ export async function listCategories(req: Request, res: Response): Promise<void>
       id: String(parent._id),
       name: parent.name,
       active: parent.active,
+      icon: parent.icon || DEFAULT_CATEGORY_ICON,
       children: all
         .filter((child) => child.parent && String(child.parent) === String(parent._id))
         .map((child) => ({ id: String(child._id), name: child.name, active: child.active })),
@@ -52,8 +53,10 @@ export async function createCategory(req: Request, res: Response): Promise<void>
     return
   }
 
-  const category = await Category.create({ name, parent })
-  res.status(201).json({ category: { id: String(category._id), name: category.name, active: category.active } })
+  // El icono solo aplica a categorías principales; si no se elige (o es inválido), queda el genérico
+  const icon = !parent && isCategoryIcon(req.body?.icon) ? req.body.icon : DEFAULT_CATEGORY_ICON
+  const category = await Category.create({ name, parent, icon })
+  res.status(201).json({ category: { id: String(category._id), name: category.name, active: category.active, icon: category.icon } })
 }
 
 export async function updateCategory(req: Request<{ id: string }>, res: Response): Promise<void> {
@@ -76,12 +79,19 @@ export async function updateCategory(req: Request<{ id: string }>, res: Response
     }
     category.name = name
   }
+  if (req.body?.icon !== undefined) {
+    if (category.parent !== null || !isCategoryIcon(req.body.icon)) {
+      res.status(400).json({ message: 'Elige un icono de la lista (solo las categorías principales tienen icono).' })
+      return
+    }
+    category.icon = req.body.icon
+  }
   if (typeof req.body?.active === 'boolean') {
     category.active = req.body.active
   }
 
   await category.save()
-  res.json({ category: { id: String(category._id), name: category.name, active: category.active } })
+  res.json({ category: { id: String(category._id), name: category.name, active: category.active, icon: category.icon } })
 }
 
 // Al eliminar una categoría principal también se eliminan sus subcategorías

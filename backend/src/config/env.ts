@@ -25,6 +25,8 @@ const env = {
     .split(',')
     .map((email) => email.trim().toLowerCase())
     .filter(Boolean),
+  // Comisión de la plataforma sobre lo cobrado (0.10 = 10 %). Se calcula al generar los reportes
+  commissionRate: Math.min(1, Math.max(0, Number(process.env.COMMISSION_RATE ?? 0.1) || 0)),
 } as const
 
 if (env.nodeEnv === 'production' && env.jwtSecret === 'cambiar-en-produccion') {

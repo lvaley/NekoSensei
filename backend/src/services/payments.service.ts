@@ -1,6 +1,7 @@
 import type { Types } from 'mongoose'
 import { Enrollment } from '../models/Enrollment'
 import type { IEnrollment } from '../models/Enrollment'
+import { Payment } from '../models/Payment'
 import { Session } from '../models/Session'
 import { User } from '../models/User'
 import { notify } from './notify.service'
@@ -120,4 +121,23 @@ export async function generateBlock(enrollment: EnrollmentDoc, startDate: string
     created++
   }
   return { created, skipped }
+}
+
+const round2 = (value: number) => Math.round(value * 100) / 100
+
+// Cuando el tutor cancela un curso ya pagado, el estudiante recibe de vuelta la parte del último bloque
+// pagado que no se llegó a dar (clases no realizadas ÷ clases del bloque). Devuelve el monto reembolsado.
+export async function refundCancelledBlock(enrollment: { _id: Types.ObjectId; cycle?: number; weeks?: number; sessionsPerWeek?: number; totalSessions?: number }): Promise<number> {
+  const payment = await Payment.findOne({ enrollment: enrollment._id, status: 'paid' }).sort({ cycle: -1, createdAt: -1 })
+  if (!payment || (payment.refundedAmount ?? 0) > 0 || payment.sessions <= 0) return 0
+  const perBlock = enrollment.weeks ? enrollment.weeks * (enrollment.sessionsPerWeek ?? 1) : (enrollment.totalSessions ?? payment.sessions)
+  const completed = await Session.countDocuments({ enrollment: enrollment._id, status: 'completed' })
+  const doneInBlock = Math.min(payment.sessions, Math.max(0, completed - (payment.cycle - 1) * perBlock))
+  const remaining = payment.sessions - doneInBlock
+  if (remaining <= 0) return 0
+  const amount = round2((payment.amount * remaining) / payment.sessions)
+  payment.refundedAmount = amount
+  payment.refundedAt = new Date()
+  await payment.save()
+  return amount
 }

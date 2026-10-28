@@ -13,7 +13,7 @@ import { getPublicStats } from '../controllers/stats.controller'
 import { createContactMessage, listContactMessages } from '../controllers/contact.controller'
 import { getHealth } from '../controllers/health.controller'
 import { updateProfile } from '../controllers/profile.controller'
-import { downloadTutorCv, listTutorApplications, reviewTutor } from '../controllers/tutors.controller'
+import { downloadTutorCv, listTutorApplications, requestReactivation, reviewTutor } from '../controllers/tutors.controller'
 import { listNotifications, markAllNotificationsRead, markNotificationRead } from '../controllers/notifications.controller'
 import { getConversation, listConversations, listMessages, openConversation, postMessage, readConversation, unreadCount } from '../controllers/chat.controller'
 import { createReview, listTutorReviews } from '../controllers/reviews.controller'
@@ -21,12 +21,15 @@ import { listUsers } from '../controllers/users.controller'
 import { createReport, listReports, updateReport } from '../controllers/reports.controller'
 import { decideAppeal, listSuspensions, reactivateUser, sendAppeal, suspendUser } from '../controllers/moderation.controller'
 import { getAdminOverview } from '../controllers/overview.controller'
+import { getAdminAnalytics, getTutorEarnings } from '../controllers/analytics.controller'
 import { requireAuth, requireAuthAllowSuspended, requireRole } from '../middlewares/auth'
 
 export const apiRouter = Router()
 
 apiRouter.get('/health', getHealth)
 apiRouter.post('/contact', createContactMessage)
+apiRouter.get('/admin/analytics', requireAuth, requireRole('admin'), getAdminAnalytics)
+apiRouter.get('/tutor/earnings', requireAuth, requireRole('tutor'), getTutorEarnings)
 apiRouter.get('/admin/overview', requireAuth, requireRole('admin'), getAdminOverview)
 apiRouter.get('/admin/contact-messages', requireAuth, requireRole('admin'), listContactMessages)
 
@@ -67,6 +70,7 @@ apiRouter.put('/categories/:id', requireAuth, requireRole('admin'), updateCatego
 apiRouter.delete('/categories/:id', requireAuth, requireRole('admin'), deleteCategory)
 
 // Revisión de tutores (administrador)
+apiRouter.post('/tutor/reactivation', requireAuth, requireRole('tutor'), requestReactivation)
 apiRouter.get('/admin/tutors', requireAuth, requireRole('admin'), listTutorApplications)
 apiRouter.patch('/admin/tutors/:id/review', requireAuth, requireRole('admin'), reviewTutor)
 apiRouter.get('/admin/tutors/:id/cv', requireAuth, requireRole('admin'), downloadTutorCv)

@@ -25,6 +25,8 @@ function paymentView(payment: InstanceType<typeof Payment>, otherName: string) {
     amount: payment.amount,
     sessions: payment.sessions,
     status: payment.status,
+    refunded: payment.refundedAmount ?? 0,
+    refundedAt: payment.refundedAt ?? null,
     failureReason: payment.failureReason ?? null,
     card: payment.cardLast4 ? { brand: payment.cardBrand, last4: payment.cardLast4 } : null,
     other: otherName,
@@ -103,6 +105,11 @@ export async function renewEnrollment(req: Request<{ id: string }>, res: Respons
   }
   if (enrollment.charge) {
     res.status(409).json({ message: 'Ya tienes un pago pendiente en este curso.' })
+    return
+  }
+  const owner = await User.findById(enrollment.tutor).select('tutorProfile.status')
+  if (owner?.tutorProfile?.status !== 'approved') {
+    res.status(409).json({ message: 'Este tutor ya no recibe renovaciones: podrás terminar el bloque actual.' })
     return
   }
   const completed = await Session.countDocuments({ enrollment: enrollment._id, status: 'completed' })

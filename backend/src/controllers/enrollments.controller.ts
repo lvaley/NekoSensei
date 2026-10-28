@@ -12,7 +12,7 @@ import { Session } from '../models/Session'
 import { distanceKm, round } from '../services/geo.service'
 import { availableSlots } from '../services/schedule.service'
 import { seatsTakenIn } from '../services/seats.service'
-import { PAYMENT_WINDOW_MS, expireOverdue } from '../services/payments.service'
+import { PAYMENT_WINDOW_MS, expireOverdue, refundCancelledBlock } from '../services/payments.service'
 import { planQuote } from '../services/pricing.service'
 import { addDays, buildChecker, isDateString, localDate, todayLocal, validateWeeklySlots } from '../services/weekly.service'
 import { User } from '../models/User'
@@ -270,6 +270,8 @@ async function closeEnrollment(req: Request<{ id: string }>, res: Response, stat
     return
   }
 
+  // Si el tutor cancela un curso ya pagado, se reembolsa lo que no se llegó a dar
+  const refund = status === 'cancelled' && enrollment.status === 'active' && String(enrollment.student) !== req.auth?.sub ? await refundCancelledBlock(enrollment) : 0
   enrollment.status = status
   // Cancelar libera también un cobro abierto (pago o renovación sin pagar)
   enrollment.charge = undefined
@@ -281,6 +283,7 @@ async function closeEnrollment(req: Request<{ id: string }>, res: Response, stat
     await notify(byStudent
       ? { user: enrollment.tutor, type: 'enrollment_cancelled', title: 'Solicitud cancelada', message: `${who} canceló su solicitud en «${enrollment.offerTitle}».`, link: '/mis-estudiantes' }
       : { user: enrollment.student, type: 'enrollment_cancelled', title: 'Inscripción cancelada', message: `${who} canceló tu inscripción en «${enrollment.offerTitle}».`, link: '/mis-cursos' })
+    if (refund > 0) await notify({ user: enrollment.student, type: 'payment_refunded', title: 'Reembolso aprobado', message: `Se te reembolsan Q${refund} por las clases que no se dieron en «${enrollment.offerTitle}».`, link: '/pagos' })
   }
   if (status === 'finished') {
     const who = await userName(req.auth?.sub ?? '')

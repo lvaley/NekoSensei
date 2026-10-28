@@ -27,6 +27,7 @@ export function toSelfUser(user: HydratedDocument<IUser>) {
           hasCvFile: !!tutor.cvFileName,
           status: tutor.status,
           reviewNote: tutor.reviewNote,
+          reactivationRequested: !!tutor.reactivationRequest,
         }
       : undefined,
   }

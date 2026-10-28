@@ -9,7 +9,7 @@ export const SELF_ASSIGNABLE_ROLES: readonly UserRole[] = ['student', 'tutor']
 export const GENDERS = ['masculino', 'femenino', 'otro', 'prefiero_no_decir'] as const
 export type Gender = (typeof GENDERS)[number]
 
-export const TUTOR_STATUSES = ['pending', 'approved', 'rejected'] as const
+export const TUTOR_STATUSES = ['pending', 'approved', 'rejected', 'inactive'] as const
 export type TutorStatus = (typeof TUTOR_STATUSES)[number]
 
 export interface IAddress {
@@ -29,6 +29,8 @@ export interface ITutorProfile {
   status: TutorStatus
   reviewNote?: string
   reviewedAt?: Date
+  // Un tutor inactivo puede pedir que lo reactiven; el administrador decide
+  reactivationRequest?: { message: string; sentAt: Date }
 }
 
 export const APPEAL_STATUSES = ['pending', 'rejected'] as const
@@ -92,6 +94,7 @@ const tutorProfileSchema = new Schema<ITutorProfile>(
     status: { type: String, enum: TUTOR_STATUSES, default: 'pending' },
     reviewNote: { type: String, trim: true, maxlength: 500 },
     reviewedAt: { type: Date },
+    reactivationRequest: { type: new Schema({ message: { type: String, required: true, maxlength: 500 }, sentAt: { type: Date, required: true } }, { _id: false }) },
   },
   { _id: false },
 )

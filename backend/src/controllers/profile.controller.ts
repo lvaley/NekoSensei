@@ -129,6 +129,7 @@ export async function updateProfile(req: Request, res: Response): Promise<void> 
       status: !previous || previous.status === 'rejected' ? 'pending' : previous.status,
       reviewNote: !previous || previous.status === 'rejected' ? undefined : previous.reviewNote,
       reviewedAt: previous?.reviewedAt,
+      reactivationRequest: previous?.reactivationRequest,
     }
   }
 
