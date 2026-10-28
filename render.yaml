@@ -1,0 +1,26 @@
+# Blueprint de Render para la API (Express + MongoDB Atlas)
+services:
+  - type: web
+    name: neko-sensei-api
+    runtime: node
+    rootDir: backend
+    plan: free
+    # tsc está en devDependencies, por eso se instalan también en la compilación
+    buildCommand: npm install --include=dev && npm run build
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_VERSION
+        value: 22
+      - key: NODE_ENV
+        value: production
+      - key: MONGODB_URI
+        sync: false
+      - key: CLIENT_URL
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: ADMIN_EMAILS
+        sync: false
