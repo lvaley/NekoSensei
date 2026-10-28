@@ -124,6 +124,11 @@ export function Navbar() {
                     {user.role === "tutor" ? "Pagos recibidos" : "Mis pagos"}
                   </NavDropdown.Item>
                 )}
+                {user.role === "tutor" && (
+                  <NavDropdown.Item as={Link} to="/ganancias">
+                    Mis ganancias
+                  </NavDropdown.Item>
+                )}
                 {user.role === "admin" && (
                   <NavDropdown.Item as={Link} to="/admin">
                     Administración

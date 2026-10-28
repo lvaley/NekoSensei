@@ -7,13 +7,12 @@ export const SITE = {
   author: 'Luis Enrique Valey Osorio',
   carnet: '9490-21-16222',
   // TODO: reemplazar por los datos reales de contacto
-  whatsapp: 'https://wa.me/50200000000',
+  whatsapp: 'https://wa.me/50223827300',
   email: 'mailto:contacto@nekosensei.com',
   social: [
-    { label: 'Instagram', icon: 'bi-instagram', href: '#' },
-    { label: 'Facebook', icon: 'bi-facebook', href: '#' },
-    { label: 'TikTok', icon: 'bi-tiktok', href: '#' },
-    { label: 'X', icon: 'bi-twitter-x', href: '#' },
+    { label: 'Instagram', icon: 'bi-instagram', href: 'https://www.instagram.com/embjapon_gt' },
+    { label: 'Facebook', icon: 'bi-facebook', href: 'https://www.facebook.com/embjaponGT' },
+    { label: 'X', icon: 'bi-twitter-x', href: 'https://x.com/fbembjapon_gt' },
   ],
 } as const
 

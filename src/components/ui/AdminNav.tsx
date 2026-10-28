@@ -5,6 +5,7 @@ const tabs = [
   { to: '/admin', label: 'Usuarios', end: true },
   { to: '/admin/tutores', label: 'Tutores' },
   { to: '/admin/denuncias', label: 'Denuncias' },
+  { to: '/admin/reporteria', label: 'Reportería' },
   { to: '/admin/mensajes', label: 'Mensajes' },
   { to: '/admin/categorias', label: 'Categorías' },
 ]
