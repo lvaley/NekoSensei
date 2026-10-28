@@ -175,6 +175,10 @@ tutorias/
 - **Renovación manual:** cuando queda una semana de clases o menos aparece *Renovar plan*; abre otro cobro por el mismo plan y los mismos horarios, empezando después de la última clase. Se paga igual y suma otro bloque (*Bloque 2*…).
 - **Mis pagos / Pagos recibidos:** `/pagos`, con concepto, clases, traslado, total, tarjeta y estado (incluye rechazos del estudiante).
 
+### Página de inicio
+
+Buscador (lleva a `/cursos?q=`), cifras reales de la plataforma (solo se muestran las que son mayores que cero), índice de materias con cantidad de cursos, tutores destacados (los mejor calificados), invitación *Quiero aprender*, modalidades, beneficios y un cierre para tutores (abre `/registro?rol=tutor`). Los visitantes con sesión no ven las invitaciones de registro.
+
 ### Notificaciones (campanita)
 
 El header muestra una campanita (estudiante y tutor) con el número de avisos sin leer; se actualiza cada 30 s y al abrirla. Cada aviso lleva a la página donde se continúa la gestión. El servidor los genera cuando: llega una solicitud de inscripción (tutor), se acepta o rechaza (estudiante), se cancela una inscripción, se agenda o cancela una clase (la otra parte), y en todo el flujo de reagendar: solicitud (tutor), horario propuesto o rechazo del tutor (estudiante), y aceptación o rechazo de la propuesta (tutor). Cada usuario solo ve los suyos y los textos no incluyen datos de contacto.
@@ -222,6 +226,23 @@ El perfil de cada tutor tiene el botón **Compartir por WhatsApp**, que abre `ht
 - **Avisos a administradores (campanita):** nueva denuncia, nueva apelación, perfil de tutor por revisar (nuevo o reenviado tras un rechazo) y mensaje de contacto. Los mensajes de contacto se leen en `/admin/mensajes` (`GET /api/admin/contact-messages`).
 - Endpoints: `POST /api/reports`; administrador: `GET /api/admin/reports?status=`, `PATCH /api/admin/reports/:id`, `GET /api/admin/suspensions`, `POST /api/admin/users/:id/suspend`, `POST /api/admin/users/:id/reactivate`, `PATCH /api/admin/users/:id/appeal`; persona suspendida: `POST /api/suspension/appeal` (y `GET /api/auth/me`, que incluye la suspensión).
 
+## Reportería (v0.8)
+
+- **Administrador** (`/admin/reporteria`, `GET /api/admin/analytics?month=yyyy-mm`): cobrado neto, comisión y lo que se paga a tutores, tutorías impartidas vs. canceladas, demanda por categoría y cursos más solicitados, y rankings de mejor y peor calificados con enlace directo a sus reseñas. Gráficas con detalle al pasar el cursor y selector de mes.
+- **Tutor** (`/ganancias`, `GET /api/tutor/earnings`): cobrado, comisión y ganancias por mes y por curso, y clases impartidas vs. canceladas.
+- Los meses se miden en hora de Guatemala. Un reembolso se descuenta en el mes del pago original.
+- Variable nueva: `COMMISSION_RATE` (0.10 = 10 %).
+
+## Tutores inactivos
+
+- Un tutor **aprobado** no se rechaza: el administrador lo **inactiva** con un motivo (`PATCH /api/admin/tutors/:id/review` con `status: "inactive"`). Sale del catálogo y no recibe solicitudes ni renovaciones nuevas; sus alumnos actuales terminan los cursos contratados.
+- El tutor inactivo ve el motivo en su panel y puede **solicitar la reactivación** (`POST /api/tutor/reactivation`). El administrador recibe un aviso y la decide desde la pestaña "Inactivos": **Reactivar** o **Rechazar solicitud** con una respuesta (el tutor puede volver a pedirla). Editar el perfil no lo reactiva.
+
+## Iconos de categorías
+
+- El administrador elige el icono de cada categoría principal al crearla (y puede cambiarlo con el botón "Icono"). Se guarda en el campo `icon` de la categoría, entre una lista fija de Bootstrap Icons (`CATEGORY_ICONS` en el backend y `CATEGORY_ICON_OPTIONS` en el frontend; deben coincidir).
+- Si no elige ninguno (o envía uno inválido) se usa el genérico `bi-journal-bookmark`. Las categorías que ya existían conservan el icono que tenían según su nombre (se asigna una sola vez al iniciar el servidor).
+
 ## Versiones
 
 | Versión | Estado | Contenido |
@@ -233,5 +254,5 @@ El perfil de cada tutor tiene el botón **Compartir por WhatsApp**, que abre `ht
 | v0.5 | ✅ | Inscripciones con aprobación del tutor, agenda con calendario, menús por rol |
 | v0.6 | ✅ | Reseñas y calificación promedio, chat en tiempo real (Socket.io), compartir perfil por WhatsApp |
 | v0.7 | ✅ | Denuncias entre estudiantes y tutores, bandeja del administrador, suspensión de cuentas y apelaciones |
-| v0.8 | ⏳ | Reportería |
+| v0.8 | ✅ | Reportería |
 | v1.0 | ⏳ | Manuales y entrega final |
