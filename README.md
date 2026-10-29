@@ -4,7 +4,7 @@ Proyecto de clase · Desarrollo Web · Universidad Mariano Gálvez · Segundo se
 
 **Autor:** Luis Enrique Valey Osorio · Carnet 9490-21-16222
 
-Abrir el enlace desplegado en Netlify: 'https://neko-sensei.netlify.app/'.
+Abrir el enlace desplegado en Netlify: `https://neko-sensei.netlify.app/`.
 
 ## Stack
 
